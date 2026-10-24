@@ -17,7 +17,7 @@ import android.view.WindowManager
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
-import android.webkit.WebViewClientCompat
+import android.webkit.WebViewClient
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
@@ -31,7 +31,8 @@ class MainActivity : ComponentActivity() {
     private lateinit var webView: WebView
 
     /** Native wallpaper picker (ACTION_GET_CONTENT -> Base64 -> WebView). */
-    private val wallpaperPicker = registerForActivityResult(
+    // Kotlin bridge (AndroidTVBridge) needs access to this launcher.
+    val wallpaperPicker = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == RESULT_OK) {
@@ -80,7 +81,7 @@ class MainActivity : ComponentActivity() {
             .addPathHandler("/assets/", WebViewAssetLoader.AssetsPathHandler(this))
             .build()
 
-        webView.webViewClient = object : WebViewClientCompat() {
+        webView.webViewClient = object : WebViewClient() {
             override fun shouldInterceptRequest(
                 view: WebView,
                 request: WebResourceRequest
