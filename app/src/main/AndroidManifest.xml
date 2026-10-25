@@ -33,6 +33,7 @@
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTask"
+            android:stateNotNeeded="true"
             android:screenOrientation="landscape"
             android:configChanges="orientation|screenSize|keyboard|keyboardHidden|navigation"
             android:exported="true">
@@ -42,6 +43,7 @@
                 <category android:name="android.intent.category.HOME" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+                <category android:name="android.intent.category.TV_LAUNCHER" />
             </intent-filter>
         </activity>
     </application>

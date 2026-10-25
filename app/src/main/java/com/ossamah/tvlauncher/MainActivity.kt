@@ -14,6 +14,7 @@ import android.util.Base64
 import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
+import android.webkit.WebSettings
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
@@ -65,6 +66,7 @@ class MainActivity : ComponentActivity() {
             javaScriptEnabled = true
             domStorageEnabled = true
             databaseEnabled = true
+            cacheMode = WebSettings.LOAD_DEFAULT
             mediaPlaybackRequiresUserGesture = false
             useWideViewPort = true
             loadWithOverviewMode = true

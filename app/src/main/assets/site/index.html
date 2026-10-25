@@ -4,14 +4,10 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>TV Launcher</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@100;200;300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* ─── THMANYAH FONT ─────────────────────────────────────────── */
-@font-face{font-family:'Thmanyah';src:url('thmanyah-font/thmanyah%20font/woff2/thmanyah-sans-Light.woff2') format('woff2'),url('thmanyah-font/thmanyah%20font/otf/thmanyah-sans-Light.otf') format('opentype');font-weight:300;font-style:normal;font-display:swap}
-@font-face{font-family:'Thmanyah';src:url('thmanyah-font/thmanyah%20font/woff2/thmanyah-sans-Regular.woff2') format('woff2'),url('thmanyah-font/thmanyah%20font/otf/thmanyah-sans-Regular.otf') format('opentype');font-weight:400;font-style:normal;font-display:swap}
-@font-face{font-family:'Thmanyah';src:url('thmanyah-font/thmanyah%20font/woff2/thmanyah-sans-Medium.woff2') format('woff2'),url('thmanyah-font/thmanyah%20font/otf/thmanyah-sans-Medium.otf') format('opentype');font-weight:500;font-style:normal;font-display:swap}
-@font-face{font-family:'Thmanyah';src:url('thmanyah-font/thmanyah%20font/woff2/thmanyah-sans-Bold.woff2') format('woff2'),url('thmanyah-font/thmanyah%20font/otf/thmanyah-sans-Bold.otf') format('opentype');font-weight:700;font-style:normal;font-display:swap}
-@font-face{font-family:'Thmanyah';src:url('thmanyah-font/thmanyah%20font/woff2/thmanyah-sans-Black.woff2') format('woff2'),url('thmanyah-font/thmanyah%20font/otf/thmanyah-sans-Black.otf') format('opentype');font-weight:900;font-style:normal;font-display:swap}
-
 /* ─── BASE ──────────────────────────────────────────────────── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -21,23 +17,24 @@
   --ink2:rgba(255,255,255,.74);
   --ink3:rgba(255,255,255,.50);
   --line:rgba(255,255,255,.14);
-  --card:rgba(12,18,28,.50);
-  --blur:blur(24px) saturate(140%);
+  --card:rgba(15,23,42,0.88);
   /* حجم البطاقات — عدّل هاتين القيمتين فقط لتصغير أو تكبير البطاقتين */
   --prayer-card-h:236px;
   --weather-card-h:328px;
-  --font-thmanyah:'Thmanyah',system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --font-app:'IBM Plex Sans Arabic',system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
 }
 html,body{width:100%;height:100%;overflow:hidden;background:#05080d;color:var(--ink);
-  font-family:var(--font-thmanyah);
+  font-family:var(--font-app);
   font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;user-select:none;
   font-synthesis-weight:none;text-rendering:optimizeLegibility}
-button,input,select,textarea{font-family:var(--font-thmanyah);font-feature-settings:"kern" 1}
+button,input,select,textarea{font-family:var(--font-app);font-feature-settings:"kern" 1}
 body{position:relative}
 .ic{display:block;flex-shrink:0}
 i[data-ic]{display:inline-flex;align-items:center;justify-content:center;font-style:normal}
 
-#bg{position:fixed;inset:0;background:#0b1220 url('wallpapers/pexels-matteo-sacco-32883547-7027649.jpg') center/cover no-repeat;z-index:0}
+#bg{position:fixed;inset:0;z-index:0;
+  background:radial-gradient(ellipse 90% 70% at 78% 74%,rgba(30,52,86,.55) 0%,transparent 65%) no-repeat,
+             linear-gradient(165deg,#0d1524 0%,#070c14 58%,#04070c 100%)}
 #bg::after{content:'';position:absolute;inset:0;
   background:
    linear-gradient(180deg,rgba(4,8,14,.50) 0%,rgba(4,8,14,.18) 38%,rgba(4,8,14,.72) 100%),
@@ -50,99 +47,93 @@ i[data-ic]{display:inline-flex;align-items:center;justify-content:center;font-st
 .dpad-focusable{outline:none;position:relative;cursor:pointer;transition:transform .2s cubic-bezier(.2,0,0,1),box-shadow .2s,background .2s,color .2s}
 .dpad-focusable.dpad-active{box-shadow:0 0 0 4px #fff,0 0 0 9px rgba(125,180,255,.55),0 18px 44px rgba(0,0,0,.55)!important;transform:scale(1.04);z-index:8}
 
-/* ─── GLASS CARD ────────────────────────────────────────────── */
-.card{background:linear-gradient(160deg,rgba(255,255,255,.10),rgba(255,255,255,.02)),var(--card);
-  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
-  border:1px solid var(--line);border-radius:34px;box-shadow:0 24px 60px rgba(0,0,0,.35)}
+/* ─── CARD ──────────────────────────────────────────────────── */
+.card{background:rgba(15, 23, 42, 0.88);
+  border:1px solid rgba(255, 255, 255, 0.12);border-radius:24px;box-shadow:0 24px 60px rgba(0,0,0,.35)}
 
 /* ─── HEADER ────────────────────────────────────────────────── */
 .hdr{display:flex;align-items:center;justify-content:space-between;height:60px;flex-shrink:0}
 .hdr-side{display:flex;align-items:center;gap:14px}
 .brand{display:flex;align-items:center;gap:14px;font-size:32px;font-weight:700;margin-inline-end:10px}
 .pill{height:52px;padding:0 22px;border-radius:26px;background:rgba(255,255,255,.10);border:1px solid var(--line);
-  display:flex;align-items:center;gap:10px;font-size:22px;font-weight:500;color:var(--ink);backdrop-filter:var(--blur)}
+  display:flex;align-items:center;gap:10px;font-size:22px;font-weight:500;color:var(--ink)}
 .pill.offline{color:#ff8f8f;background:rgba(255,120,120,.16);border-color:rgba(255,120,120,.4)}
 .pill .dot{opacity:.4}
 .ibtn{width:54px;height:54px;border-radius:50%;background:rgba(255,255,255,.10);border:1px solid var(--line);
-  display:flex;align-items:center;justify-content:center;color:#fff;backdrop-filter:var(--blur)}
+  display:flex;align-items:center;justify-content:center;color:#fff}
 
 /* ─── MAIN GRID ─────────────────────────────────────────────── */
 .main{flex:1;min-height:0;display:grid;grid-template-columns:540px 1fr;gap:32px}
 
 /* HERO */
 .hero{display:flex;flex-direction:column;justify-content:flex-start;align-items:flex-start;padding-top:4px;min-width:0}
-.hero-greet{font-size:48px;font-weight:700;line-height:1.15;color:var(--ink2);text-shadow:0 4px 26px rgba(0,0,0,.5)}
-.hero-sub{font-size:24px;font-weight:400;color:var(--ink3);margin-top:8px;text-shadow:0 2px 16px rgba(0,0,0,.6);min-height:30px}
+.hero-greet{font-size:48px;font-weight:700;line-height:1.15;color:var(--ink2)}
+.hero-sub{font-size:24px;font-weight:400;color:var(--ink3);margin-top:8px;min-height:30px}
 .hero-clock-row{display:flex;align-items:center;gap:16px;margin:2px 0 18px}
-.hero-clock{font-size:200px;font-weight:300;line-height:1;direction:ltr;letter-spacing:-6px;text-shadow:0 8px 44px rgba(0,0,0,.6)}
+.hero-clock{font-size:200px;font-weight:300;line-height:1;direction:ltr;letter-spacing:-6px}
 .hero-ampm{font-size:28px;font-weight:700;color:var(--accent);background:rgba(125,180,255,.16);border:1px solid rgba(125,180,255,.4);padding:4px 14px;border-radius:14px;display:none}
-.hero-date{font-size:26px;font-weight:500;color:var(--ink2);text-shadow:0 2px 16px rgba(0,0,0,.6)}
-.hero-hijri{font-size:22px;font-weight:500;color:var(--gold);margin-top:8px;text-shadow:0 2px 16px rgba(0,0,0,.6)}
+.hero-date{font-size:26px;font-weight:500;color:var(--ink2)}
+.hero-hijri{font-size:22px;font-weight:500;color:var(--gold);margin-top:8px}
 
 /* CARDS COLUMN */
 .cards{display:flex;flex-direction:column;justify-content:center;gap:20px;min-height:0;min-width:0}
 
-/* PRAYER CARD */
-#prayer-card{flex:none;height:var(--prayer-card-h);padding:18px 28px 20px;display:flex;flex-direction:column;gap:10px}
-.p-head{display:flex;align-items:center;justify-content:space-between}
-.p-next{display:flex;align-items:center;gap:16px}
-.p-badge{font-size:18px;font-weight:700;color:var(--gold);background:rgba(255,198,92,.14);border:1px solid rgba(255,198,92,.45);padding:4px 14px;border-radius:18px}
-.p-name{font-size:40px;font-weight:900;line-height:1}
-.p-right{display:flex;align-items:center;gap:16px}
-.p-adhan{font-size:19px;color:var(--ink2)}
-.p-count{font-size:38px;font-weight:800;color:#ffd98a;direction:ltr;background:rgba(255,198,92,.12);border:1px solid rgba(255,198,92,.45);border-radius:16px;padding:2px 18px;box-shadow:0 0 24px rgba(255,198,92,.18)}
-.p-bar{height:5px;border-radius:6px;background:rgba(255,255,255,.10);overflow:hidden}
-.p-bar>div{height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,#ff9f43,#ffd98a);transition:width 1s linear}
-.p-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
-.pbox{border-radius:20px;padding:10px 6px 12px;display:flex;flex-direction:column;align-items:center;gap:4px;
-  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);color:var(--ink2);position:relative}
-.pbox.past{opacity:.5}
-.pbox.active{opacity:1;color:#ffe3a6;background:linear-gradient(160deg,rgba(255,198,92,.30),rgba(255,198,92,.08));
-  border-color:rgba(255,198,92,.85);box-shadow:0 0 34px rgba(255,198,92,.25)}
-.pbox .pn{font-size:19px;font-weight:600}
-.pbox .pt{font-size:27px;font-weight:700;color:#fff;direction:ltr}
-.pbox .chip-next{position:absolute;top:-10px;background:var(--gold);color:#241800;font-size:13px;font-weight:800;padding:1px 10px;border-radius:9px}
+/* PRAYER CARD — widget compact */
+#prayer-card{flex:none;height:var(--prayer-card-h);padding:14px 24px 16px;display:flex;flex-direction:column;justify-content:space-between;gap:10px}
+.p-top{display:flex;align-items:center;justify-content:space-between}
+.p-badge{font-size:17px;font-weight:700;color:var(--gold);display:flex;align-items:center;gap:8px}
+.p-capsule{display:flex;align-items:center;gap:14px;background:rgba(255,198,92,.10);border:1px solid rgba(255,198,92,.38);
+  border-radius:44px;padding:6px 10px 6px 26px;box-shadow:0 0 26px rgba(255,198,92,.10)}
+.p-capsule .p-name{font-size:32px;font-weight:800;line-height:1}
+.p-capsule .p-count{font-size:30px;font-weight:700;color:#ffd98a;direction:ltr;font-variant-numeric:tabular-nums}
+.p-mid{display:flex;align-items:center;justify-content:center;min-height:0;flex:1}
+.prayer-svg{width:132px;height:92px;display:flex;align-items:center;justify-content:center}
+.prayer-svg svg{width:100%;height:100%}
+.p-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding-top:4px;border-top:1px solid rgba(255,255,255,.08)}
+.pr{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px 6px;border-radius:16px;color:var(--ink3);position:relative}
+.pr .pi{color:var(--ink3);transition:color .3s}
+.pr .pn{font-size:18px;font-weight:600}
+.pr .pt{font-size:25px;font-weight:700;color:var(--ink2);direction:ltr;font-variant-numeric:tabular-nums}
+.pr.calm{color:#ffe3a6;background:linear-gradient(180deg,rgba(255,198,92,.16),rgba(255,198,92,.05));box-shadow:0 0 22px rgba(255,198,92,.12)}
+.pr.calm .pi,.pr.calm .pn{color:#ffe3a6}
+.pr.calm .pt{color:#fff}
+.pr.past{opacity:.45}
 
-/* WEATHER CARD */
-#weather-card{flex:none;height:var(--weather-card-h);min-height:0;padding:18px 28px;display:grid;grid-template-columns:272px 1fr;gap:26px}
-.w-now{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;padding-inline-end:24px;border-inline-end:1px solid var(--line)}
-.w-icon{width:96px;height:96px;filter:drop-shadow(0 8px 18px rgba(0,0,0,.4))}
+/* WEATHER CARD — widget compact */
+#weather-card{flex:none;height:var(--weather-card-h);min-height:0;padding:18px 28px 20px;display:flex;flex-direction:column;justify-content:space-between;gap:8px}
+.w-top{display:flex;align-items:center;justify-content:space-between}
+.w-temp{font-size:84px;font-weight:700;line-height:1;letter-spacing:-3px;direction:ltr}
+.w-city-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:6px;text-align:end}
+.w-city-name{font-size:30px;font-weight:700;color:#fff}
+.w-cond{font-size:22px;font-weight:500;color:var(--ink2)}
+.w-mid{display:flex;align-items:center;justify-content:center;min-height:0;flex:1}
+.w-icon{width:150px;height:108px;display:flex;align-items:center;justify-content:center}
 .w-icon svg{width:100%;height:100%}
-.w-temp{font-size:84px;font-weight:800;line-height:1;letter-spacing:-3px;direction:ltr}
-.w-cond{font-size:26px;font-weight:700;margin-top:2px}
-.w-feels{font-size:20px;color:var(--ink2)}
-.w-right{display:flex;flex-direction:column;justify-content:space-between;gap:10px;min-height:0;min-width:0}
-.w-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.metric{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:8px 14px;display:flex;align-items:center;gap:10px}
-.metric .ic{color:var(--accent)}
-.metric .ml{font-size:16px;color:var(--ink3)}
-.metric .mv{font-size:23px;font-weight:700;direction:ltr;text-align:start}
-.w-hourly{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
-.hcell{border-radius:18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);padding:8px 4px 9px;
-  display:flex;flex-direction:column;align-items:center;gap:3px}
-.hcell.now{background:rgba(125,180,255,.16);border-color:rgba(125,180,255,.45)}
-.hcell .ht{font-size:17px;color:var(--ink2);font-weight:600}
-.hcell .hi{width:38px;height:38px}.hcell .hi svg{width:100%;height:100%}
-.hcell .hd{font-size:25px;font-weight:700}
+.w-hourly{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;padding-top:10px;border-top:1px solid rgba(255,255,255,.10)}
+.hcell{display:flex;flex-direction:column;align-items:center;gap:4px;border-radius:14px;padding:2px 4px}
+.hcell .ht{font-size:17px;color:var(--ink3);font-weight:600}
+.hcell .hi{width:46px;height:46px}.hcell .hi svg{width:100%;height:100%}
+.hcell .hd{font-size:25px;font-weight:700;direction:ltr}
 .hcell .hp{font-size:15px;color:#8cc4ff;display:flex;align-items:center;gap:3px;height:18px}
-.w-sun{display:flex;align-items:center;justify-content:space-around;font-size:21px;color:var(--ink2);border-top:1px solid var(--line);padding-top:8px}
-.w-sun span.s{display:flex;align-items:center;gap:10px}
-.w-sun strong{color:#fff;font-weight:700;direction:ltr}
 
 /* ─── DOCK ──────────────────────────────────────────────────── */
 .dock-wrap{flex-shrink:0;display:flex;flex-direction:column;gap:10px}
 .dock-head{display:flex;align-items:center;justify-content:space-between;height:54px;padding:0 4px}
-.dock-name{font-size:38px;font-weight:800;text-shadow:0 3px 20px rgba(0,0,0,.6)}
+.dock-name{font-size:38px;font-weight:800}
 .allapps-btn{display:flex;align-items:center;gap:12px;height:52px;padding:0 26px;border-radius:26px;font-size:23px;font-weight:600;
-  background:rgba(255,255,255,.12);border:1px solid var(--line);backdrop-filter:var(--blur)}
+  background:rgba(255,255,255,.12);border:1px solid var(--line)}
 .allapps-btn.dpad-active{background:var(--accent);color:#07111f}
-.dock{display:grid;grid-template-columns:repeat(var(--cols,6),minmax(0,1fr));gap:20px;height:150px;padding:8px 6px 0}
-.tile{border-radius:30px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;
-  background:var(--tbg,#222);color:var(--tfg,#fff);border:1px solid rgba(255,255,255,.14);box-shadow:0 14px 36px rgba(0,0,0,.35)}
+.dock{display:grid;grid-template-columns:repeat(var(--cols,6),minmax(0,1fr));gap:20px;height:184px;padding:8px 6px 0}
+.tile{border-radius:26px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;
+  background:var(--tbg,#222);color:var(--tfg,#fff);border:1px solid rgba(255,255,255,.14);box-shadow:0 14px 36px rgba(0,0,0,.35);
+  transition:transform .2s cubic-bezier(.2,0,0,1),box-shadow .2s,border-color .2s}
+.tile.dpad-focusable.dpad-active{transform:scale(1.08);border-color:var(--accent);
+  box-shadow:0 0 0 4px #fff,0 0 0 9px rgba(125,180,255,.55),0 0 44px rgba(125,180,255,.40),0 24px 56px rgba(0,0,0,.55)!important;z-index:8}
 .tile::before{content:'';position:absolute;inset:0;background:linear-gradient(160deg,rgba(255,255,255,.16),transparent 55%)}
-.tile .mark{position:relative;display:flex;align-items:center;justify-content:center}
-.tile .mark svg{width:auto;height:76px}
-.letter{font-size:64px;font-weight:900}
+.tile .mark{position:relative;display:flex;align-items:center;justify-content:center;width:96px;height:96px}
+.tile .mark svg{width:auto;height:80px}
+.tile .mark img{width:84px;height:84px;object-fit:contain;border-radius:12px}
+.letter{font-size:72px;font-weight:900}
 
 /* ─── OVERLAYS ──────────────────────────────────────────────── */
 .overlay{position:absolute;inset:-40px -64px -40px -64px;z-index:50;display:none;background:rgba(3,6,12,.84)}
@@ -154,10 +145,12 @@ i[data-ic]{display:inline-flex;align-items:center;justify-content:center;font-st
   display:flex;flex-direction:column;gap:22px;box-shadow:0 -30px 80px rgba(0,0,0,.7)}
 .drawer-top{display:flex;align-items:center;justify-content:space-between}
 .drawer-title{display:flex;align-items:center;gap:14px;font-size:34px;font-weight:700}
-.apps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:20px;overflow-y:auto;padding:14px 8px 20px}
-.dapp{height:150px;border-radius:28px;display:flex;align-items:center;justify-content:center}
-.dapp .mark svg{height:64px;width:auto}
-.dlabel{position:absolute;bottom:12px;inset-inline:0;text-align:center;font-size:20px;font-weight:600;direction:ltr}
+.apps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:22px;overflow-y:auto;padding:14px 8px 20px}
+.dapp{height:184px;border-radius:26px;display:flex;align-items:center;justify-content:center}
+.dapp .mark{width:96px;height:96px}
+.dapp .mark svg{height:84px;width:auto}
+.dapp .mark img{width:84px;height:84px}
+.dlabel{position:absolute;bottom:14px;inset-inline:0;text-align:center;font-size:21px;font-weight:600;direction:ltr}
 .star{position:absolute;top:12px;inset-inline-end:12px;width:48px;height:48px;border-radius:50%;background:rgba(0,0,0,.35);
   border:1px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;color:#fff;z-index:3}
 .star.fav{color:var(--gold);background:rgba(0,0,0,.55)}
@@ -246,7 +239,7 @@ i[data-ic]{display:inline-flex;align-items:center;justify-content:center;font-st
   opacity:0;visibility:hidden;pointer-events:none;transition:opacity .55s ease,visibility .55s ease}
 #screensaver-overlay.show{opacity:1;visibility:visible;pointer-events:auto}
 /* طبقة صورة الخلفية داخل شاشة التوقف (لا ما للخلفية القديمة) — تلاشٍ متقاطع بين طبقتين */
-#sv-bg{position:absolute;inset:0;overflow:hidden;background:url('wallpapers/pexels-matteo-sacco-32883547-7027649.jpg') center/cover no-repeat #05080d}
+#sv-bg{position:absolute;inset:0;overflow:hidden;background:radial-gradient(ellipse 90% 70% at 78% 74%,rgba(30,52,86,.45) 0%,transparent 65%) no-repeat,linear-gradient(165deg,#0d1524 0%,#070c14 58%,#04070c 100%)}
 #sv-bg .sv-bgimg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 1.5s ease}
 #sv-bg .sv-bgimg.on{opacity:1}
 /* تعتيم خفيف أعلى وأسفل فقط لقراءة النصوص دون حجب الصورة */
@@ -343,41 +336,28 @@ i[data-ic]{display:inline-flex;align-items:center;justify-content:center;font-st
     <section class="cards">
       <!-- PRAYER -->
       <div class="card" id="prayer-card">
-        <div class="p-head">
-          <div class="p-next">
-            <span class="p-badge" data-i18n="nextPrayerBadge"></span>
+        <div class="p-top">
+          <span class="p-badge"><i data-ic="moon" data-s="20" style="color:var(--gold)"></i><span data-i18n="nextPrayerBadge"></span></span>
+          <div class="p-capsule">
             <span class="p-name" id="prayer-next-title">--</span>
-          </div>
-          <div class="p-right">
-            <span class="p-adhan" id="prayer-adhan-time"></span>
             <span class="p-count" id="prayer-countdown">00:00:00</span>
           </div>
         </div>
-        <div class="p-bar"><div id="prayer-progress-fill"></div></div>
-        <div class="p-grid" id="prayers-grid"></div>
+        <div class="p-mid"><div class="prayer-svg a-bob" id="prayer-svg"></div></div>
+        <div class="p-row" id="prayers-row"></div>
       </div>
 
       <!-- WEATHER -->
       <div class="card" id="weather-card">
-        <div class="w-now">
-          <div class="w-icon" id="weather-main-svg"></div>
+        <div class="w-top">
           <div class="w-temp" id="weather-main-temp">--°</div>
-          <div class="w-cond" id="weather-cond-text">--</div>
-          <div class="w-feels"><span data-i18n="feels"></span> <span id="weather-feels-val" style="direction:ltr;display:inline-block">--°</span></div>
-        </div>
-        <div class="w-right">
-          <div class="w-metrics">
-            <div class="metric"><i data-ic="droplet" data-s="26"></i><div><div class="ml" data-i18n="humidity"></div><div class="mv" id="metric-humidity">--%</div></div></div>
-            <div class="metric"><i data-ic="wind" data-s="26"></i><div><div class="ml" data-i18n="wind"></div><div class="mv" id="metric-wind">--</div></div></div>
-            <div class="metric"><i data-ic="arrowUp" data-s="26"></i><div><div class="ml" data-i18n="high"></div><div class="mv" id="metric-high">--°</div></div></div>
-            <div class="metric"><i data-ic="arrowDown" data-s="26"></i><div><div class="ml" data-i18n="low"></div><div class="mv" id="metric-low">--°</div></div></div>
-          </div>
-          <div class="w-hourly" id="hourly-strip"></div>
-          <div class="w-sun">
-            <span class="s"><i data-ic="sunrise" data-s="26" style="color:#ffb347"></i><span data-i18n="sunrise"></span> <strong id="sun-rise-time">--:--</strong></span>
-            <span class="s"><i data-ic="sunset" data-s="26" style="color:#ff8a6b"></i><span data-i18n="sunset"></span> <strong id="sun-set-time">--:--</strong></span>
+          <div class="w-city-wrap">
+            <div class="w-city-name" id="w-city-name">--</div>
+            <div class="w-cond" id="weather-cond-text">--</div>
           </div>
         </div>
+        <div class="w-mid"><div class="w-icon" id="weather-main-svg"></div></div>
+        <div class="w-hourly" id="hourly-strip"></div>
       </div>
     </section>
   </main>
@@ -696,30 +676,48 @@ function createWeatherSVG(code,isDay){
 }
 
 /* ═══ 3. APPS ═══ */
+/* التطبيقات الحقيقية فقط من الجهاز عبر AndroidTV.getInstalledApps() — بلا أي تطبيقات وهمية.
+   بقي فقط إعداد التلفاز كثابت: */
 const ALL_APPS = [
-  {id:'youtube',label:'YouTube',pkg:'com.google.android.youtube.tv',bg:'#f6f6f8',fg:'#111',
-   icon:'<svg viewBox="0 0 32 32"><path d="M29.5 9.8c-.3-1.3-1.4-2.4-2.7-2.8C24.4 6.3 16 6.3 16 6.3s-8.4 0-10.8.7C3.9 7.4 2.8 8.5 2.5 9.8 1.8 12.2 1.8 16 1.8 16s0 3.8.7 6.2c.3 1.3 1.4 2.4 2.7 2.8 2.4.7 10.8.7 10.8.7s8.4 0 10.8-.7c1.3-.4 2.4-1.5 2.7-2.8.7-2.4.7-6.2.7-6.2s0-3.8-.7-6.2z" fill="#ff0000"/><polygon points="13,20.5 21,16 13,11.5" fill="#fff"/></svg>'},
-  {id:'netflix',label:'Netflix',pkg:'com.netflix.ninja',bg:'#141414',fg:'#fff',
-   icon:'<svg viewBox="0 0 20 32"><rect x="0" y="0" width="6" height="32" fill="#b20710"/><rect x="14" y="0" width="6" height="32" fill="#b20710"/><polygon points="0,0 6,0 20,32 14,32" fill="#e50914"/></svg>'},
-  {id:'nuvio',label:'Nuvio',pkg:'com.nuvio.app',bg:'linear-gradient(150deg,#16305f,#0b1830)',fg:'#fff',
-   icon:'<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="13" stroke="#7db4ff" stroke-width="2.6"/><path d="M11 16l3.5 3.5 7-7" stroke="#7db4ff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'},
-  {id:'stremio',label:'Stremio',pkg:'com.stremio.one',bg:'linear-gradient(150deg,#3a2277,#1b1033)',fg:'#fff',
-   icon:'<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="13" fill="#7b4cd6"/><polygon points="13,10 22,16 13,22" fill="#fff"/></svg>'},
-  {id:'smarttube',label:'SmartTube',pkg:'com.liskovsoft.videomanager',bg:'linear-gradient(150deg,#0c5da5,#07243f)',fg:'#fff',
-   icon:'<svg viewBox="0 0 32 32"><rect x="3" y="3" width="26" height="26" rx="8" fill="#17a8ff"/><polygon points="13,11 22,16 13,21" fill="#fff"/></svg>'},
-  {id:'playstore',label:'Play Store',pkg:'com.android.vending',bg:'#f6f6f8',fg:'#111',
-   icon:'<svg viewBox="0 0 32 32"><path d="M5 4l14 12L5 28V4z" fill="#00d2d3"/><path d="M22.5 13L19 16l3.5 3 4-2.2c1.2-.7 1.2-1.9 0-2.6l-4-2.2z" fill="#ff9f43"/><path d="M5 4l14 12 3.5-3L9 3.5C7.7 2.7 6.1 3 5 4z" fill="#10ac84"/><path d="M5 28c1.1 1 2.7 1.3 4 .5l13.5-9.5-3.5-3L5 28z" fill="#ee5253"/></svg>'},
-  {id:'crunchyroll',label:'Crunchyroll',pkg:'com.crunchyroll.crunchyroid',bg:'#f47521',fg:'#fff',
-   icon:'<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="13" fill="#fff"/><circle cx="18.5" cy="15.5" r="8" fill="#f47521"/><circle cx="20.6" cy="15.5" r="5.2" fill="#fff"/></svg>'},
-  {id:'shahid',label:'Shahid',pkg:'com.shahid.atv',bg:'linear-gradient(150deg,#12342a,#07130f)',fg:'#fff',
-   icon:'<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="13" fill="#00c46a"/><path d="M11 16h10M16 11v10" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>'},
-  {id:'osn',label:'OSN+',pkg:'com.osn.oplay',bg:'#0a0a0a',fg:'#fff',
-   icon:'<svg viewBox="0 0 40 32" fill="none"><circle cx="13" cy="19" r="8" stroke="#fff" stroke-width="3.4"/><path d="M26 17v10" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/><path d="M33 4v12M27 10h12" stroke="#ff3dc8" stroke-width="3.2" stroke-linecap="round"/></svg>'},
-  {id:'appletv',label:'Apple TV',pkg:'com.apple.atve.androidtv.appletv',bg:'#1c1c1e',fg:'#fff',
-   icon:'<svg viewBox="0 0 28 32" fill="#fff"><path d="M14.5 5.5c.8-1 1.4-2.4 1.2-3.8-1.2.1-2.6.8-3.4 1.8-.8.9-1.4 2.3-1.2 3.7 1.3.1 2.6-.7 3.4-1.7zM16.5 7.5c-1.9-.1-3.5 1.1-4.4 1.1-.9 0-2.3-1-3.8-1-2 0-3.8 1.1-4.8 2.9-2 3.5-.5 8.7 1.4 11.6 1 1.4 2.1 3 3.6 2.9 1.5-.1 2-1 3.8-1s2.2 1 3.8 1c1.6 0 2.6-1.4 3.6-2.8 1.1-1.6 1.6-3.2 1.6-3.3-.1 0-3.1-1.2-3.1-4.7 0-3 2.4-4.4 2.5-4.5-1.4-2-3.6-2.2-4.2-2.2z"/></svg>'},
-  {id:'prime',label:'Prime Video',pkg:'com.amazon.amazonvideo.livingroom',bg:'#0a8ee6',fg:'#fff',
-   icon:'<svg viewBox="0 0 32 32" fill="none"><path d="M10 7l14 8-14 8V7z" fill="#fff"/><path d="M6 26 Q16 31 26 25" stroke="#ff9900" stroke-width="2.6" stroke-linecap="round"/></svg>'}
+  {id:'tv-settings',label:'TV settings',pkg:'com.android.tv.settings',bg:'linear-gradient(150deg,#35516e,#1a2735)',fg:'#fff',
+   icon:'<svg viewBox="0 0 24 24" width="64" height="64" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="2.6"/><path d="M3 5v6c0 1.44 4.03 2.6 9 2.6s9-1.16 9-2.6V5"/><path d="M3 11v6c0 1.44 4.03 2.6 9 2.6s9-1.16 9-2.6v-6"/></svg>'}
 ];
+
+/* فتح إعدادات التلفاز: اختر حزمة الإعدادات الموجودة فعلاً على الجهاز */
+function launchSettingsApp(){
+  const candidates=['com.android.tv.settings','com.android.settings'];
+  const installed=(window.__installedApps||[]).map(a=>a.pkg);
+  const pkg=candidates.find(p=>installed.includes(p))||candidates[0];
+  launchApp(pkg);
+}
+/* مزامنة قائمة التطبيقات الحقيقية المثبتة من الجهاز (يُستدعى عند الإقلاع قبل renderDock):
+   - يعبّئ window.__installedApps (يستخدمه launchSettingsApp)
+   - يدمج التطبيقات الجديدة في STATE.extraApps ويحذف التي لم تعد مثبتة
+   - عند مفضّلة فارغة/شبه فارغة يملأ الـ dock تلقائياً من أول 6 تطبيقات مثبتة */
+function syncInstalledApps(){
+  try{
+    if(!(window.AndroidTV&&typeof window.AndroidTV.getInstalledApps==='function')) return;
+    const inst=JSON.parse(window.AndroidTV.getInstalledApps())||[];
+    window.__installedApps=inst;
+    /* حذف الإضافية التي لم تعد مثبتة */
+    STATE.extraApps=(STATE.extraApps||[]).filter(a=>inst.some(it=>it.pkg===a.pkg));
+    /* دمج الجديدة */
+    inst.forEach(it=>{
+      if(!getApps().some(a=>a.pkg===it.pkg))
+        STATE.extraApps.push({id:it.pkg,label:it.label||it.pkg,pkg:it.pkg,icon:it.icon||null});
+    });
+    /* حذف المفضلة الغير موجودة، ثم الملء التلقائي */
+    const valid=getApps().map(a=>a.id);
+    STATE.favAppIds=(STATE.favAppIds||[]).filter(id=>valid.includes(id));
+    if(STATE.favAppIds.filter(id=>id!=='tv-settings').length<2){
+      const picks=inst.slice(0,STATE.maxDockApps).map(it=>it.pkg);
+      STATE.favAppIds=picks.filter(Boolean);
+      /* بلا تطبيقات مثبتة ← tile الإعدادات وحده */
+      if(!STATE.favAppIds.length) STATE.favAppIds=['tv-settings'];
+    }
+    saveState();
+  }catch(e){ console.warn('syncInstalledApps fail',e); }
+}
 
 /* ═══ 4. I18N ═══ */
 const I18N = {
@@ -729,18 +727,9 @@ const I18N = {
 };
 
 const BUILTIN_WALLPAPERS = [
-  {id:'camels',name:'قافلة الجمال',url:'wallpapers/pexels-matteo-sacco-32883547-7027649.jpg'},
-  {id:'agadir',name:'أكادير',url:'wallpapers/wallpaperflare.com_wallpaper.jpg'},
-  {id:'sahara',name:'صحراء',url:'wallpapers/wp3004763-morocco-wallpaper-hd.jpg'},
-  {id:'hassan2',name:'مسجد الحسن الثاني',url:'wallpapers/wp3004665-morocco-wallpaper-hd.jpg'},
-  {id:'oasis',name:'واحة',url:'wallpapers/sergey-pesterev-i-P1lmY_e1w-unsplash.jpg'},
-  {id:'harbor',name:'مرسى الصيادين',url:'wallpapers/philipp-klausner-TYHyrF56Gys-unsplash.jpg'},
-  {id:'marrakech',name:'مراكش',url:'wallpapers/paul-macallan-CFKksjYRSQ8-unsplash.jpg'},
-  {id:'aitbenhaddou',name:'أيت بن حمو',url:'wallpapers/555722.jpg'},
-  {id:'chefchaouen',name:'شفشاون',url:'wallpapers/738484.jpg'},
-  {id:'bluealleys',name:'أزقة شفشاون',url:'wallpapers/kyriacos-georgiou-CMmgfHQiYsc-unsplash.jpg'},
-  {id:'argan',name:'ماشية الأركان',url:'wallpapers/pexels-ivan-drazic-20457695-13429086.jpg'},
-  {id:'merzouga',name:'مرزوكة',url:'wallpapers/wp3004790-morocco-wallpaper-hd.jpg'}
+  {id:'wall-chefchaouen',name:'شفشاون',url:'https://unsplash.com/photos/i-P1lmY_e1w/download?force=true&w=1920'},
+  {id:'wall-koutoubia',name:'الكتبية مراكش',url:'https://unsplash.com/photos/CFKksjYRSQ8/download?force=true&w=1920'},
+  {id:'wall-essaouira',name:'الصويرة',url:'https://unsplash.com/photos/TYHyrF56Gys/download?force=true&w=1920'}
 ];
 
 /* ═══ 5. STATE ═══ */
@@ -749,8 +738,8 @@ let STATE = {
   lang:'ar',
   city:{name:'أكادير',lat:30.4278,lon:-9.5981,country:'المغرب',tz:'Africa/Casablanca'},
   prayerMethod:21, tempUnit:'C', clockFormat:24, maxDockApps:6,
-  favAppIds:['youtube','netflix','nuvio','stremio','smarttube','playstore'],
-  showPrayer:true, showWeather:true, wallpaperIndex:0, wallpaperCustom:null, extraApps:[], screensaverDelay:3,
+  favAppIds:[],  /* تُملأ تلقائياً من التطبيقات المثبتة الحقيقية عند أول تشغيل */
+  showPrayer:true, showWeather:true, wallpaperId:'wall-chefchaouen', wallpaperCustom:null, extraApps:[], screensaverDelay:3,
   ssBgInterval:0, ssDailyMode:'both',
   ssOcc:{ramadan:true,qadr:false,fitr:true,arafah:true,adha:true,newyear:true,ashura:true,mawlid:false,isra:false},
   hijriOffset:0, ssNightDim:true
@@ -758,9 +747,22 @@ let STATE = {
 function saveState(){ try{localStorage.setItem(PREFS_KEY,JSON.stringify(STATE));}catch(e){} }
 (function loadState(){
   try{
+    /* ترحيل لمرة واحدة إذا كنا نقرأ من مفاتيح التفضيلات القديمة (v6 وما قبله) */
+    const vintage=!localStorage.getItem(PREFS_KEY);
     const s = JSON.parse(localStorage.getItem(PREFS_KEY)||localStorage.getItem('tv_launcher_v6_dock_fix_prefs'));
     if(s) STATE = Object.assign(STATE,s);
     if(!STATE.ssBgV2){ STATE.ssBgInterval=0; STATE.ssBgV2=true; }
+    if(vintage){
+      /* حذف أي تطبيقات وهمية قديمة (المفضلة كانت تشير إلى presets محذوفة) */
+      STATE.favAppIds=(STATE.favAppIds||[]).filter(id=>ALL_APPS.some(a=>a.id===id));
+      STATE.extraApps=[];
+    }
+    if(STATE.wallpaperIndex!==undefined){
+      STATE.wallpaperId=BUILTIN_WALLPAPERS[STATE.wallpaperIndex||0]||BUILTIN_WALLPAPERS[0];
+      if(STATE.wallpaperId) STATE.wallpaperId=STATE.wallpaperId.id;
+      delete STATE.wallpaperIndex;
+    }
+    if(!STATE.wallpaperId) STATE.wallpaperId=BUILTIN_WALLPAPERS[0].id;
   }catch(e){}
 })();
 function extraAppIcon(a){
@@ -819,17 +821,48 @@ function fit(){
 addEventListener('resize',fit); fit();
 
 /* ═══ 8. I18N APPLY ═══ */
-const PRAYERS_GRID=['Fajr','Sunrise','Dhuhr','Asr','Maghrib','Isha'];
-const PRAYER_ICON={Fajr:'fajr',Sunrise:'sunrise',Dhuhr:'sun',Asr:'asr',Maghrib:'sunset',Isha:'moon'};
+const PRAYERS_GRID=['Fajr','Dhuhr','Asr','Maghrib','Isha'];
+const PRAYER_ICON={Fajr:'fajr',Dhuhr:'sun',Asr:'asr',Maghrib:'sunset',Isha:'moon'};
 
 function buildPrayerGrid(){
-  const g=document.getElementById('prayers-grid'); g.innerHTML='';
+  const g=document.getElementById('prayers-row'); g.innerHTML='';
   PRAYERS_GRID.forEach(k=>{
-    const d=document.createElement('div'); d.className='pbox'; d.id='pbox-'+k;
-    d.innerHTML=ic(PRAYER_ICON[k],32)+'<div class="pn" id="pname-'+k+'"></div><div class="pt" id="ptime-'+k+'">--:--</div>';
+    const d=document.createElement('div'); d.className='pr'; d.id='pbox-'+k;
+    d.innerHTML='<span class="pi">'+ic(PRAYER_ICON[k],30)+'</span><div class="pn" id="pname-'+k+'"></div><div class="pt" id="ptime-'+k+'">--:--</div>';
     g.appendChild(d);
   });
 }
+/* أيقونة SVG متحركة تعبّر عن الصلاة القادمة/الحالية */
+function prayerSVG(k){
+  let b='';
+  if(k==='Fajr'){
+    /* فجرًا: هلال فوق أفق مع شعاعٍ أولي */
+    b='<g transform="translate(10 34) scale(1.25)">'+moonGx()+'</g><g stroke="#ffd98a" stroke-width="2.4" stroke-linecap="round">'+
+      '<path d="M8 50c8-3 40-3 48 0"/>'+
+      '<line class="a-tw1" x1="52" y1="18" x2="52" y2="22"/><line class="a-tw2" x1="44" y1="24" x2="44" y2="26"/>'+
+      '<line class="a-tw1" x1="12" y1="22" x2="12" y2="25"/></g>'+
+      '<g fill="#2b4a7a"><ellipse cx="32" cy="62" rx="26" ry="4" opacity=".55"/></g>';
+  }else if(k==='Dhuhr'||k==='Asr'){
+    /* نهارًا: شمس دوّارة (عالية للظهر، منخفضة للعصر) */
+    const sy=k==='Dhuhr'?26:40;
+    b='<g transform="translate(32 '+sy+')">'+sunG(0,0,k==='Dhuhr'?1.1:0.95)+'</g>';
+    if(k==='Asr'){
+      b+='<g fill="url(#gCloud)" opacity=".8" transform="translate(0 18) scale(1.05)"><circle cx="35" cy="33" r="12"/><circle cx="46" cy="41" r="10"/><rect x="24" y="38" width="22" height="11"/></g>';
+    }
+    b+='<g fill="#2b4a7a"><ellipse cx="32" cy="62" rx="26" ry="4" opacity=".55"/></g>';
+  }else if(k==='Maghrib'){
+    /* مغربًا: شمس تغرب في الأفق */
+    b='<g transform="translate(32 44)">'+sunG(0,0,1.3)+'</g><g fill="#2b4a7a"><rect x="4" y="44" width="56" height="20" rx="6" opacity=".92"/></g>'+
+      '<g stroke="#ff8a6b" stroke-width="2.4" stroke-linecap="round" opacity=".9"><line class="a-tw2" x1="14" y1="40" x2="14" y2="43"/><line class="a-tw1" x1="48" y1="38" x2="48" y2="42"/></g>';
+  }else{
+    /* عشاءً/ليلًا: هلال كامل مع نجوم وضوء */
+    b='<g transform="translate(9 14) scale(1.35)">'+moonGx()+'</g>'+
+      '<g fill="#fff" stroke="none"><circle class="a-tw1" cx="46" cy="18" r="2.2"/><circle class="a-tw2" cx="54" cy="30" r="1.6"/><circle class="a-tw1" cx="18" cy="38" r="1.4"/></g>'+
+      '<g fill="#2b4a7a"><ellipse cx="32" cy="62" rx="26" ry="4" opacity=".55"/><path d="M10 58h44v-6a6 6 0 0 0-6-6H16a6 6 0 0 0-6 6z" opacity=".35"/></g>';
+  }
+  return '<svg viewBox="0 0 64 64" width="100%" height="100%" fill="none">'+b+'</svg>';
+}
+function moonGx(){ return '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="url(#gMoon)"/>'; }
 function applyI18n(){
   const rtl = STATE.lang==='ar';
   document.documentElement.setAttribute('dir',rtl?'rtl':'ltr');
@@ -909,12 +942,10 @@ function calcPrayer(){
     lastNextKey=next.k;
     PRAYERS_GRID.forEach(k=>{
       const b=document.getElementById('pbox-'+k); if(!b) return;
-      b.classList.toggle('active',k===next.k);
-      const old=b.querySelector('.chip-next'); if(old) old.remove();
-      if(k===next.k){ const c=document.createElement('div'); c.className='chip-next'; c.textContent=t('nextPrayerChip'); b.appendChild(c); }
+      b.classList.toggle('calm',k===next.k);
     });
     document.getElementById('prayer-next-title').textContent=t('prayers',next.k);
-    document.getElementById('prayer-adhan-time').textContent=t('adhan')+' '+toLatin(fmtHM(prayerTimings[next.k]));
+    document.getElementById('prayer-svg').innerHTML=prayerSVG(next.k);
   }
   PRAYERS_GRID.forEach(k=>{
     const b=document.getElementById('pbox-'+k); if(!b) return;
@@ -922,8 +953,6 @@ function calcPrayer(){
   });
   const diff=Math.max(0,Math.floor((next.d-now)/1000));
   document.getElementById('prayer-countdown').textContent=pad2(Math.floor(diff/3600))+':'+pad2(Math.floor(diff%3600/60))+':'+pad2(diff%60);
-  const pct=Math.min(100,Math.max(0,(now-prev.d)/(next.d-prev.d)*100));
-  document.getElementById('prayer-progress-fill').style.width=pct+'%';
   APP_DATA.next={k:next.k,time:prayerTimings[next.k],rem:diff};
 }
 setInterval(calcPrayer,1000);
@@ -939,7 +968,7 @@ async function loadWeather(){
     const url='https://api.open-meteo.com/v1/forecast?latitude='+STATE.city.lat+'&longitude='+STATE.city.lon+
       '&current=temperature_2m,apparent_temperature,is_day,weather_code,wind_speed_10m,relative_humidity_2m'+
       '&hourly=temperature_2m,weather_code,is_day,precipitation_probability'+
-      '&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset&timezone='+tz+'&forecast_days=2';
+      '&daily=temperature_2m_max,temperature_2m_min&timezone='+tz+'&forecast_days=2';
     const d=await fetchJSON(url,'tv_cache_weather_'+STATE.city.lat+'_'+STATE.city.lon);
     const cur=d.current, daily=d.daily, hourly=d.hourly;
     const isDay=cur.is_day===1, code=cur.weather_code;
@@ -949,14 +978,8 @@ async function loadWeather(){
     document.getElementById('weather-main-svg').innerHTML=createWeatherSVG(code,isDay);
     document.getElementById('weather-main-temp').textContent=tempFmt(cur.temperature_2m);
     document.getElementById('weather-cond-text').textContent=desc;
-    document.getElementById('weather-feels-val').textContent=tempFmt(cur.apparent_temperature);
-    document.getElementById('metric-humidity').textContent=Math.round(cur.relative_humidity_2m)+'%';
-    document.getElementById('metric-wind').textContent=Math.round(cur.wind_speed_10m)+' '+t('speedUnit');
-    document.getElementById('metric-high').textContent=tempFmt(daily.temperature_2m_max[0]);
-    document.getElementById('metric-low').textContent=tempFmt(daily.temperature_2m_min[0]);
+    document.getElementById('w-city-name').textContent=STATE.city.name+(STATE.city.country?' • '+STATE.city.country:'');
     APP_DATA.weather={code:code,isDay:isDay,temp:cur.temperature_2m,hi:daily.temperature_2m_max[0],lo:daily.temperature_2m_min[0],fetchedAt:Date.now()};
-    if(daily.sunrise[0]) document.getElementById('sun-rise-time').textContent=fmtTime(+daily.sunrise[0].substring(11,13),+daily.sunrise[0].substring(14,16));
-    if(daily.sunset[0]) document.getElementById('sun-set-time').textContent=fmtTime(+daily.sunset[0].substring(11,13),+daily.sunset[0].substring(14,16));
 
     const strip=document.getElementById('hourly-strip'); strip.innerHTML='';
     const prefix=(cur.time||'').substring(0,13);
@@ -976,6 +999,12 @@ async function loadWeather(){
 
 /* ═══ 12. DOCK ═══ */
 function tileStyle(app){ return '--tbg:'+app.bg+';--tfg:'+app.fg; }
+/* فتح تطبيق: الثابت 'tv-settings' يمر عبر launchSettingsApp (يختار الحزمة المثبتة فعلاً) */
+function launchAppFor(app){
+  if(!app) return;
+  if(app.id==='tv-settings'){ launchSettingsApp(); return; }
+  launchApp(app.pkg);
+}
 function renderDock(){
   const dock=document.getElementById('dock'); dock.innerHTML='';
   const ids=STATE.favAppIds.filter(id=>getApp(id)).slice(0,STATE.maxDockApps);
@@ -986,7 +1015,7 @@ function renderDock(){
     c.className='tile dpad-focusable'; c.tabIndex=0; c.dataset.appLabel=app.label; c.dataset.fk='dock-'+id;
     c.setAttribute('style',tileStyle(app));
     c.innerHTML='<div class="mark">'+app.icon+'</div>';
-    c.onclick=()=>launchApp(app.pkg);
+    c.onclick=()=>launchAppFor(app);
     c.onmouseenter=()=>dpadSetFocus(c);
     dock.appendChild(c);
   });
@@ -1033,7 +1062,7 @@ function renderAllAppsGrid(){
       item.className='tile dapp dpad-focusable'; item.tabIndex=0; item.dataset.fk='da-'+app.id; item.dataset.favId=app.id;
       item.setAttribute('style',tileStyle(app));
       item.innerHTML='<div class="mark">'+app.icon+'</div><div class="dlabel">'+app.label+'</div>';
-      item.onclick=()=>{ closeAllAppsDrawer(); launchApp(app.pkg); };
+      item.onclick=()=>{ closeAllAppsDrawer(); launchAppFor(app); };
       const st=document.createElement('div');
       st.className='star'+(fav?' fav':'');
       st.innerHTML=ic('star',24,fav?'fill:currentColor':'');
@@ -1108,13 +1137,97 @@ function openDB(){ return new Promise(res=>{ if(idb) return res(idb); try{ const
 async function saveWallpaperDB(u){ const d=await openDB(); if(!d) return; d.transaction('wallpapers','readwrite').objectStore('wallpapers').put(u,'current'); }
 async function loadWallpaperDB(){ const d=await openDB(); if(!d) return null; return new Promise(res=>{ const q=d.transaction('wallpapers','readonly').objectStore('wallpapers').get('current'); q.onsuccess=()=>res(q.result||null); q.onerror=()=>res(null); }); }
 function applyWallpaper(u){ document.getElementById('bg').style.backgroundImage="url('"+u+"')"; }
+
+/* ─── تخزين الخلفيات سحابياً → ضغط Base64 في IndexedDB (فتح فوري + عمل كامل دون إنترنت) ─── */
+let wallURLCache={};                 /* id → dataURL (ذاكرة سريعة) */
+async function loadWallDB(key){
+  const d=await openDB(); if(!d) return null;
+  return new Promise(res=>{ try{ const q=d.transaction('wallpapers','readonly').objectStore('wallpapers').get(key);
+    q.onsuccess=()=>res(q.result||null); q.onerror=()=>res(null); }catch(e){ res(null); } });
+}
+async function saveWallDB(key,url){
+  const d=await openDB(); if(!d) return;
+  try{ d.transaction('wallpapers','readwrite').objectStore('wallpapers').put(url,key); }catch(e){}
+}
+/* تحميل الصورة → قص إلى 1920px → ضغط JPEG 0.8 → DataURL */
+function fetchWallpaperDataURL(url){
+  return new Promise((resolve,reject)=>{
+    if(!navigator.onLine){ reject(new Error('offline')); return; }
+    fetch(url,{cache:'force-cache'}).then(r=>{
+      if(!r.ok) throw new Error('http '+r.status);
+      return r.blob();
+    }).then(blob=>{
+      const objURL=URL.createObjectURL(blob);
+      const img=new Image();
+      img.onload=()=>{
+        try{
+          const maxW=1920;
+          const ratio=Math.min(1,maxW/img.naturalWidth);
+          const cv=document.createElement('canvas');
+          cv.width=Math.round(img.naturalWidth*ratio); cv.height=Math.round(img.naturalHeight*ratio);
+          const ctx=cv.getContext('2d');
+          ctx.drawImage(img,0,0,cv.width,cv.height);
+          const dataURL=cv.toDataURL('image/jpeg',0.8);
+          URL.revokeObjectURL(objURL);
+          resolve(dataURL);
+        }catch(e){ URL.revokeObjectURL(objURL); reject(e); }
+      };
+      img.onerror=()=>{ URL.revokeObjectURL(objURL); reject(new Error('img decode fail')); };
+      img.src=objURL;
+    }).catch(reject);
+  });
+}
+function isDataURL(u){ return String(u).indexOf('data:image/')===0; }
+/* رابط أهلاً للعرض للخلفية: الكاش الجاهز (DataURL) إن وُجد وإلا الرابط الخام */
+function wallURLFor(id){
+  const w=BUILTIN_WALLPAPERS.find(x=>x.id===id)||BUILTIN_WALLPAPERS[0];
+  return wallURLCache[w.id]||w.url;
+}
+/* ضمان تخزين خلفية معيّنة (لمرة واحدة لكل تشغيل) ثم أتاحتها للعرض الفوري */
+async function ensureWallCached(id,save){
+  const w=BUILTIN_WALLPAPERS.find(x=>x.id===id); if(!w) return null;
+  if(wallURLCache[w.id]) return wallURLCache[w.id];
+  const key='wall_'+w.id;
+  const cached=await loadWallDB(key);
+  if(cached&&isDataURL(cached)){ wallURLCache[w.id]=cached; return cached; }
+  try{
+    const dataURL=await fetchWallpaperDataURL(w.url);
+    wallURLCache[w.id]=dataURL;
+    if(save!==false) await saveWallDB(key,dataURL);
+    return dataURL;
+  }catch(e){
+    /* فشل التنزيل أو ضغط القماش (CORS): رجوع إلى الرابط الخام */
+    wallURLCache[w.id]=null;
+    return null;
+  }
+}
+/* تطبيق خلفية معيّنة مع مراعاة الكاش والدونلود المسبق */
+async function applyWallpaperForId(id){
+  const w=BUILTIN_WALLPAPERS.find(x=>x.id===id)||BUILTIN_WALLPAPERS[0];
+  if(STATE.wallpaperCustom) return;          /* خلفية مخصصة نشطة — لا شيء هنا */
+  const dataURL=await ensureWallCached(w.id);
+  if(wallURLCache[w.id]&&isDataURL(wallURLCache[w.id])){
+    applyWallpaper(wallURLCache[w.id]); return;
+  }
+  if(dataURL){ applyWallpaper(dataURL); return; }
+  /* لا كاش بعد (فشل/بلا إنترنت): الرابط الخام إن نفع، وإلا يبقى التدرّج الداكن الافتراضي */
+  if(navigator.onLine) applyWallpaper(w.url);
+}
+
 function renderWallpapersStrip(){
   fitMemoryKeep(function(){
     const s=document.getElementById('wallpapers-strip'); s.innerHTML='';
-    BUILTIN_WALLPAPERS.forEach((w,i)=>{
-      const b=document.createElement('div'); b.className='wp dpad-focusable'+((!STATE.wallpaperCustom&&STATE.wallpaperIndex===i)?' active':'');
-      b.tabIndex=0; b.dataset.fk='wp-'+i; b.style.backgroundImage="url('"+w.url+"')"; b.title=w.name;
-      b.onclick=()=>{ STATE.wallpaperIndex=i; STATE.wallpaperCustom=null; saveState(); applyWallpaper(w.url); renderWallpapersStrip(); };
+    BUILTIN_WALLPAPERS.forEach(w=>{
+      const b=document.createElement('div');
+      b.className='wp dpad-focusable'+((!STATE.wallpaperCustom&&STATE.wallpaperId===w.id)?' active':'');
+      b.tabIndex=0; b.dataset.fk='wp-'+w.id; b.title=w.name;
+      /* الصورة المصغّرة: الكاش إن وُجد (DataURL فوري + دعم offline)، وإلا الرابط الخام */
+      b.style.backgroundImage="url('"+wallURLFor(w.id)+"')";
+      b.onclick=async()=>{
+        STATE.wallpaperId=w.id; STATE.wallpaperCustom=null; saveState();
+        await applyWallpaperForId(w.id);
+        renderWallpapersStrip();
+      };
       s.appendChild(b);
     });
   });
@@ -1133,10 +1246,15 @@ function handleWallpaperFile(e){
 }
 async function initWallpaper(){
   renderWallpapersStrip();
+  /* خلفية مخصصة محفوظة في IndexedDB تحت المفتاح 'current' */
   const c=await loadWallpaperDB();
   if(c) customWallURL=c;
-  if(c&&STATE.wallpaperCustom) applyWallpaper(c);
-  else applyWallpaper(BUILTIN_WALLPAPERS[STATE.wallpaperIndex||0].url);
+  if(c&&STATE.wallpaperCustom){ applyWallpaper(c); return; }
+  await applyWallpaperForId(STATE.wallpaperId||BUILTIN_WALLPAPERS[0].id);
+  /* بعد الخمول ~4 ثوان: تخزين بقية الخلفيات الثلاث مسبقاً (ضغط + IndexedDB) للفوريّة لاحقاً */
+  setTimeout(()=>{
+    BUILTIN_WALLPAPERS.filter(w=>w.id!==STATE.wallpaperId).forEach(w=>ensureWallCached(w.id));
+  },4000);
 }
 
 /* ═══ 15. SETTINGS ═══ */
@@ -1414,10 +1532,10 @@ function ssFillDaily(){
 /* خلفية شاشة التوقف: تناوب كل 10/30/60 دقيقة مع تلاشٍ متقاطع ~1.5s وتحميل مسبق */
 function svHomeWall(){
   if(STATE.wallpaperCustom&&customWallURL) return customWallURL;
-  return BUILTIN_WALLPAPERS[STATE.wallpaperIndex||0].url;
+  return wallURLFor(STATE.wallpaperId||BUILTIN_WALLPAPERS[0].id);
 }
 function svPool(){
-  const p=BUILTIN_WALLPAPERS.map(w=>w.url);
+  const p=BUILTIN_WALLPAPERS.map(w=>wallURLFor(w.id));
   if(customWallURL) p.push(customWallURL);
   return p.filter(u=>u&&!svFailedBgs.has(u));
 }
@@ -1689,6 +1807,7 @@ document.addEventListener('keyup',e=>{
 });
 
 /* ═══ 19. BOOT ═══ */
+syncInstalledApps();        /* ← التطبيقات الحقيقية قبل أي render */
 hydrateIcons();
 buildPrayerGrid();
 document.getElementById('header-city-name').textContent=STATE.city.name;
