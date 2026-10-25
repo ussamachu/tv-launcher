@@ -67,9 +67,11 @@ class MainActivity : ComponentActivity() {
 
     @Suppress("DEPRECATION")
     private fun setupWebView() {
-        // Render the WebView as a hardware layer — avoids software canvas fallback
-        // which was the main source of lag on low-power TV boxes.
-        webView.setLayerType(View.LAYER_TYPE_HARDWARE, null)
+        // no intermediate layer: the window is already hardware-accelerated via
+        // the manifest. A full-screen LAYER_TYPE_HARDWARE forces an extra
+        // SurfaceTexture copy on every animation frame — a known jank source
+        // on old Amlogic quad-core GPUs.
+        webView.setLayerType(View.LAYER_TYPE_NONE, null)
         webView.settings.apply {
             javaScriptEnabled = true
             domStorageEnabled = true
