@@ -26,9 +26,6 @@ import androidx.webkit.WebViewAssetLoader
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
-import java.io.InputStreamReader
-import java.net.HttpURLConnection
-import java.net.URL
 
 class MainActivity : ComponentActivity() {
 
@@ -278,31 +275,6 @@ class AndroidTVBridge(private val activity: MainActivity) {
             }
         } catch (_: Exception) {
             "none"
-        }
-    }
-
-    /**
-     * Native HTTP GET performed from Kotlin instead of the WebView.
-     * Needed for APIs (e.g. football-data.org) that send no CORS headers, so a
-     * browser-side fetch() from the https://appassets.androidplatform.net
-     * origin would be blocked. Returns the raw response body ("" on failure).
-     */
-    @android.webkit.JavascriptInterface
-    fun httpGetJson(url: String, token: String?): String {
-        return try {
-            val conn = URL(url).openConnection() as HttpURLConnection
-            conn.connectTimeout = 8000
-            conn.readTimeout = 10000
-            conn.requestMethod = "GET"
-            conn.setRequestProperty("Accept", "application/json")
-            if (!token.isNullOrBlank()) conn.setRequestProperty("X-Auth-Token", token)
-            val code = conn.responseCode
-            val stream = if (code in 200..299) conn.inputStream else conn.errorStream
-            val body = stream?.use { InputStreamReader(it, Charsets.UTF_8).use { r -> r.readText() } } ?: ""
-            conn.disconnect()
-            body
-        } catch (_: Exception) {
-            ""
         }
     }
 
