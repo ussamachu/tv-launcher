@@ -13,11 +13,18 @@ android {
         targetSdk 34
         versionCode 1
         versionName "1.0"
+        // Ships only the languages the launcher actually uses — trims every
+        // unused resource qualifier bundle from AAR dependencies.
+        resConfigs "ar", "fr", "en"
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            // Full R8 shrinking: unused library code/resources are stripped,
+            // keeping the APK as small as possible on TV boxes.
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 

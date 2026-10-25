@@ -117,6 +117,24 @@ i[data-ic]{display:inline-flex;align-items:center;justify-content:center;font-st
 .hcell .hd{font-size:17px;font-weight:700;direction:ltr;color:#fff}
 .hcell .hp{display:none}
 
+/* MATCHES CARD — أهم مباريات اليوم (Same square 380px widget) */
+#matches-card{width:380px;height:380px;padding:26px 24px 22px;border-radius:38px;display:flex;flex-direction:column;justify-content:space-between;gap:8px;flex:none}
+.m-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.m-badge{font-size:16px;font-weight:600;color:var(--ink3);display:flex;align-items:center;gap:6px}
+.m-date{font-size:16px;font-weight:600;color:var(--ink3)}
+.m-list{display:flex;flex-direction:column;gap:4px;flex:1;min-height:0;overflow-y:auto;padding:6px 2px 4px;
+  scrollbar-width:none}
+.m-list::-webkit-scrollbar{display:none}
+.mrow{display:flex;align-items:center;gap:8px;min-height:44px;padding:4px 8px;border-radius:12px;background:rgba(255,255,255,.05)}
+.mrow:last-child{border:none}
+.mc{font-size:12px;font-weight:700;color:var(--gold);flex:none;max-width:92px;line-height:1.15}
+.mteams{flex:1;min-width:0;font-size:15px;font-weight:600;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mteams .mx{color:var(--accent);font-weight:800;margin:0 3px}
+.mt{font-size:17px;font-weight:700;direction:ltr;color:#fff;flex:none;font-variant-numeric:tabular-nums}
+.mlive{font-size:11px;font-weight:800;color:#ff8f8f;background:rgba(255,120,120,.18);border-radius:8px;padding:2px 7px;flex:none;letter-spacing:1px}
+.mfin{font-size:12px;font-weight:600;color:var(--ink3);flex:none}
+.m-empty{display:flex;align-items:center;justify-content:center;flex:1;min-height:0;text-align:center;font-size:14px;color:var(--ink3);line-height:1.7;padding:0 14px}
+
 /* ─── DOCK ──────────────────────────────────────────────────── */
 .dock-wrap{flex-shrink:0;display:flex;flex-direction:column;gap:10px}
 .dock-head{display:flex;align-items:center;justify-content:space-between;height:54px;padding:0 4px}
@@ -361,6 +379,15 @@ i[data-ic]{display:inline-flex;align-items:center;justify-content:center;font-st
         <div class="w-mid"><div class="w-icon" id="weather-main-svg"></div></div>
         <div class="w-hourly" id="hourly-strip"></div>
       </div>
+
+      <!-- MATCHES — أهم مباريات اليوم -->
+      <div class="card" id="matches-card">
+        <div class="m-top">
+          <span class="m-badge"><i data-ic="spark" data-s="20" style="color:var(--gold)"></i><span id="matches-title"></span></span>
+          <div class="m-date" id="matches-date"></div>
+        </div>
+        <div class="m-list" id="matches-list"></div>
+      </div>
     </section>
   </main>
 
@@ -516,6 +543,21 @@ i[data-ic]{display:inline-flex;align-items:center;justify-content:center;font-st
             <div class="sp-card">
               <div class="srow dpad-focusable" tabindex="0" onclick="toggleCard('prayer')"><span data-i18n="cardPrayerLbl"></span><div class="tg" id="sw-prayer"></div></div>
               <div class="srow dpad-focusable" tabindex="0" onclick="toggleCard('weather')"><span data-i18n="cardWeatherLbl"></span><div class="tg" id="sw-weather"></div></div>
+              <div class="srow dpad-focusable" tabindex="0" onclick="toggleCard('matches')"><span id="matches-card-lbl"></span><div class="tg" id="sw-matches"></div></div>
+            </div>
+          </section>
+
+          <section class="sp-sec">
+            <h3 id="matches-set-title"></h3>
+            <div class="sp-card">
+              <div class="srow"><span id="matches-token-lbl"></span>
+                <button class="btn dpad-focusable" tabindex="0" onclick="clearMatchesToken()"><span>✕</span></button>
+              </div>
+              <div class="srow search">
+                <input type="text" id="matches-token-input" class="inp dpad-focusable" tabindex="0" dir="ltr" />
+                <button class="btn dpad-focusable" tabindex="0" onclick="saveMatchesToken()"><i data-ic="check" data-s="24"></i><span id="matches-save-lbl"></span></button>
+              </div>
+              <div class="opts"><div style="font-size:13px;color:var(--ink3);line-height:1.6" dir="rtl" id="matches-help"></div></div>
             </div>
           </section>
 
@@ -743,6 +785,7 @@ let STATE = {
   prayerMethod:21, tempUnit:'C', clockFormat:24, maxDockApps:6,
   favAppIds:[],  /* تُملأ تلقائياً من التطبيقات المثبتة الحقيقية عند أول تشغيل */
   showPrayer:true, showWeather:true, wallpaperId:'wall-chefchaouen', wallpaperCustom:null, extraApps:[], screensaverDelay:3,
+  showMatches:true, matchesToken:'',
   ssBgInterval:0, ssDailyMode:'both',
   ssOcc:{ramadan:true,qadr:false,fitr:true,arafah:true,adha:true,newyear:true,ashura:true,mawlid:false,isra:false},
   hijriOffset:0, ssNightDim:true
@@ -1220,6 +1263,8 @@ function renderSettingsUI(){
   document.getElementById('chip-12').classList.toggle('sel',STATE.clockFormat===12);
   document.getElementById('sw-prayer').classList.toggle('on',STATE.showPrayer);
   document.getElementById('sw-weather').classList.toggle('on',STATE.showWeather);
+  document.getElementById('sw-matches').classList.toggle('on',STATE.showMatches!==false);
+  applyMatchesStatic();
   [1,3,5].forEach(n=>{const el=document.getElementById('ss-'+n); if(el) el.classList.toggle('sel',STATE.screensaverDelay===n);});
   [0,10,30,60].forEach(n=>{const el=document.getElementById('ssi-'+n); if(el) el.classList.toggle('sel',ssBgInterval()===n);});
   const dm=STATE.ssDailyMode||'both';
@@ -1278,8 +1323,96 @@ function setTempUnit(u){ STATE.tempUnit=u; saveState(); renderSettingsUI(); load
 function setClockFormat(f){ STATE.clockFormat=f; saveState(); renderSettingsUI(); updateClock(); loadPrayers(); loadWeather(); }
 function toggleCard(type){
   if(type==='prayer'){ STATE.showPrayer=!STATE.showPrayer; document.getElementById('prayer-card').style.display=STATE.showPrayer?'':'none'; }
+  else if(type==='matches'){ STATE.showMatches=STATE.showMatches===false; document.getElementById('matches-card').style.display=(STATE.showMatches!==false)?'':'none'; }
   else { STATE.showWeather=!STATE.showWeather; document.getElementById('weather-card').style.display=STATE.showWeather?'':'none'; }
   saveState(); renderSettingsUI();
+}
+/* ═══ 12b. TODAY'S MATCHES — أهم مباريات اليوم ═══ */
+/* Data sources:
+   • football-data.org v4 (CL + Top-5 leagues) via the native bridge httpGetJson()
+     because the API sends no CORS headers — a direct fetch() from the WebView
+     (appassets origin) would be blocked. Needs the user's free token, entered
+     in Settings.
+   • Botola Pro (Morocco) best-effort via TheSportsDB free test key "123". */
+function applyMatchesStatic(){
+  const L=STATE.lang, ar=L==='ar', fr=L==='fr';
+  document.getElementById('matches-title').textContent=ar?'أهم مباريات اليوم':(fr?'Top matchs du jour':'Top Matches Today');
+  document.getElementById('matches-card-lbl').textContent=ar?'بطاقة المباريات':'Matches card';
+  document.getElementById('matches-set-title').textContent=ar?'مفاتيح المباريات (football-data.org)':'Matches API key (football-data.org)';
+  document.getElementById('matches-token-lbl').textContent=ar?'مفتاح football-data.org المُسجل: '+((STATE.matchesToken||'').slice(0,8)||'لا شيئ'):('Registered token: '+((STATE.matchesToken||'').slice(0,8)||'none'));
+  document.getElementById('matches-save-lbl').textContent=ar?'حفظ المفتاح':(fr?'Enregistrer':'Save key');
+  document.getElementById('matches-help').textContent=ar?
+    'أنشئ مفتاحاً مجانياً على football-data.org ثم ألصقه هنا لعرض مباريات أبطال أوروبا والدوريات الأوروبية الكبرى. البطولة المغربية تعمل تلقائياً بدون مفتاح (مصدر مجاني بجهد صفري).':
+    (fr?'Créez une clé gratuite sur football-data.org pour suivre le Champions League et les grands championnats. La Botola fonctionne sans clé.':'Create a free key at football-data.org to show the Champions League and top European leagues. The Moroccan Botola works without a key.');
+}
+function saveMatchesToken(){
+  const v=document.getElementById('matches-token-input').value.trim();
+  STATE.matchesToken=v; saveState(); applyMatchesStatic(); loadMatches();
+}
+function clearMatchesToken(){
+  STATE.matchesToken=''; saveState(); document.getElementById('matches-token-input').value=''; applyMatchesStatic(); loadMatches();
+}
+function matchesDateStr(){ const n=cityNow(); return n.getFullYear()+'-'+pad2(n.getMonth()+1)+'-'+pad2(n.getDate()); }
+function mTime(utc){
+  const d=utc?new Date(utc):null; if(!d||isNaN(d.getTime())) return '--';
+  try{ return d.toLocaleTimeString('en-GB',{timeZone:cityTz(),hour:'2-digit',minute:'2-digit',hour12:false}); }
+  catch(e){ return pad2(d.getHours())+':'+pad2(d.getMinutes()); }
+}
+function esc(s){ return String(s||'').replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c])); }
+const MATCH_COMPS={2001:{ar:'أبطال أوروبا',en:'Champions League',fr:'C1',p:0},
+                   2021:{ar:'الإنجليزي',en:'Premier L.'},2014:{ar:'الإسباني',en:'La Liga'},2019:{ar:'الإيطالي',en:'Serie A'},2002:{ar:'الألماني',en:'Bundesliga'},2015:{ar:'الفرنسي',en:'Ligue 1'}};
+function compPri(id){ return id===2001 ? 0 : (MATCH_COMPS[id]?1:9); }
+function isLive(st){ return ['IN_PLAY','PAUSED','1H','2H','HT','ET','LIVE','3H','4H'].indexOf(String(st||''))>=0; }
+function isFin(st){ return ['FINISHED','FT','AET','PEN'].indexOf(String(st||''))>=0; }
+async function loadMatches(){
+  const L=STATE.lang, ar=L==='ar', fr=L==='fr';
+  const ds=matchesDateStr();
+  setText(document.getElementById('matches-date'),toLatin(ds));
+  const list=document.getElementById('matches-list');
+  if(STATE.showMatches===false) return;
+
+  const rows=[];
+  if(STATE.matchesToken){
+    try{
+      const url='https://api.football-data.org/v4/matches?dateFrom='+ds+'&dateTo='+ds+'&competitions=2001,2021,2014,2019,2002,2015';
+      const raw=window.AndroidTV ? AndroidTV.httpGetJson(url,STATE.matchesToken) : '';
+      let j=null; try{ j=raw?JSON.parse(raw):null; }catch(_){ }
+      if(j&&Array.isArray(j.matches)){
+        j.matches.forEach(m=>{
+          rows.push({utc:m.utcDate,comp:m.competition&&m.competition.id||2001,
+                     h:m.homeTeam&&m.homeTeam.name||'?',a:m.awayTeam&&m.awayTeam.name||'?',st:m.status});
+        });
+      }
+    }catch(e){}
+  }
+  /* البطولة المغربية من TheSportsDB (بدون مفتاح) — جهد صفري; تُعرض استعانتاً بالمفتاح */
+  try{
+    const r=await fetch('https://www.thesportsdb.com/api/v1/json/123/eventsday.php?d='+ds+'&s=Soccer');
+    const j=await r.json();
+    (j.events||[]).filter(e=>/botola|morocco/i.test(e.strLeague||'')).forEach(e=>{
+      const parts=String(e.strEvent||'').split(' vs ');
+      const t=e.strTimestamp||((e.dateEvent||'')+(e.strTime&&e.strTime!=='00:00:00'?'T'+e.strTime:''));
+      rows.push({utc:t,comp:-1,h:parts[0]||'?',a:parts[1]||'?'});
+    });
+  }catch(e){}
+
+  rows.sort((x,y)=>compPri(x.comp)-compPri(y.comp) || new Date(x.utc||0)-new Date(y.utc||0));
+
+  if(!rows.length){
+    const msg=!STATE.matchesToken?
+      (ar?'أضف مفتاح football-data.org في «الإعدادات» لعرض أبطال أوروبا والدوريات الكبرى، أو اتركه فارغاً لعرض مباريات البطولة المغربية فقط.':fr?'Ajoutez votre clé football-data.org dans les réglages...':'Add your football-data.org key in Settings to show the Champions League & top leagues (Moroccan Botola loads automatically).'):
+      (ar?'لا توجد مباريات اليوم.':(fr?'Aucun match aujourd\'hui.':'No matches today.'));
+    list.innerHTML='<div class="m-empty">'+msg+'</div>';
+    return;
+  }
+  const max=7;
+  list.innerHTML=rows.slice(0,max).map(r=>{
+    let st='';
+    if(isLive(r.st)) st='<span class="mlive">LIVE</span>';
+    else if(isFin(r.st)) st='<span class="mfin">✓</span>';
+    const cn=r.comp===-1?(ar?'البطولة':(fr?'Botola':'Botola')):(MATCH_COMPS[r.comp]?MATCH_COMPS[r.comp][L=='ar'?'ar':(L=='fr'?'fr':'en')||'en']||MATCH_COMPS[r.comp].en:'');
+    return '<div class="mrow"><span class="mc">'+esc(cn)+'</span><span class="mteams">'+esc(r.h)+'<span class="mx">×</span>'+esc(r.a)+'</span>'+st+'<span class="mt">'+mTime(r.utc)+'</span></div>';
+  }).join('');
 }
 function triggerInputSource(){
   if(window.AndroidTV&&typeof window.AndroidTV.openInputSources==='function') window.AndroidTV.openInputSources();
@@ -1776,11 +1909,17 @@ buildPrayerGrid();
 document.getElementById('header-city-name').textContent=STATE.city.name;
 if(!STATE.showPrayer) document.getElementById('prayer-card').style.display='none';
 if(!STATE.showWeather) document.getElementById('weather-card').style.display='none';
+if(STATE.showMatches===false) document.getElementById('matches-card').style.display='none';
 applyI18n();
 initWallpaper();
 resetIdleTimer();
 loadPrayers();
 loadWeather();
+if(STATE.showMatches!==false){
+  loadMatches();
+  /* refresh every 15 minutes (kickoff status changes live→finished) */
+  setInterval(loadMatches,15*60*1000);
+}
 setTimeout(()=>{ const f=document.querySelector('#dock .tile'); if(f) dpadSetFocus(f); },300);
 </script>
 </body>
