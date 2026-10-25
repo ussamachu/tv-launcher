@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Al-Minhaj icon background: deep navy gradient with the app's dark palette -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <gradient
+        android:type="linear"
+        android:angle="315"
+        android:startColor="#1A2C48"
+        android:centerColor="#0B1526"
+        android:endColor="#05080D" />
+</shape>
