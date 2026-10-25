@@ -28,5 +28,5 @@ jobs:
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Ossamah-TV-Launcher-APK
+          name: Al-Minhaj-TV-Launcher-APK
           path: app/build/outputs/apk/debug/app-debug.apk

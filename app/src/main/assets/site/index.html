@@ -70,7 +70,7 @@ i[data-ic]{display:inline-flex;align-items:center;justify-content:center;font-st
 .hero-greet{font-size:48px;font-weight:700;line-height:1.15;color:var(--ink2)}
 .hero-sub{font-size:24px;font-weight:400;color:var(--ink3);margin-top:8px;min-height:30px}
 .hero-clock-row{display:flex;align-items:center;gap:16px;margin:2px 0 18px}
-.hero-clock{font-size:200px;font-weight:300;line-height:1;direction:ltr;letter-spacing:-6px}
+.hero-clock{font-size:200px;font-weight:600;line-height:1;direction:ltr;letter-spacing:-6px}
 .hero-ampm{font-size:28px;font-weight:700;color:var(--accent);background:rgba(125,180,255,.16);border:1px solid rgba(125,180,255,.4);padding:4px 14px;border-radius:14px;display:none}
 .hero-date{font-size:26px;font-weight:500;color:var(--ink2)}
 .hero-hijri{font-size:22px;font-weight:500;color:var(--gold);margin-top:8px}
@@ -267,10 +267,13 @@ i[data-ic]{display:inline-flex;align-items:center;justify-content:center;font-st
 .sv-mid{flex:1;display:grid;grid-template-columns:1fr auto;gap:28px;align-items:center;min-height:0}
 .sv-clockwrap{justify-self:start;text-align:start}
 .sv-clock-row{display:flex;align-items:center;gap:22px;direction:ltr;margin:2px 0 18px}
-.sv-clock{font-size:200px;font-weight:300;line-height:1;letter-spacing:-6px;color:#fff;display:inline-block}
+.sv-clock{font-size:200px;font-weight:600;line-height:1;letter-spacing:-6px;color:#fff;display:inline-block}
 .sv-ampm{font-size:30px;font-weight:700;color:var(--accent);background:rgba(125,180,255,.16);border:1px solid rgba(125,180,255,.4);padding:6px 16px;border-radius:16px}
 .sv-cityrow{display:flex;align-items:center;gap:12px;font-size:26px;color:rgba(233,240,250,.82);margin-top:2px}
 .sv-dot{width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 5px rgba(125,180,255,.16)}
+.sv-sunrow{display:flex;align-items:center;gap:10px;margin-top:12px;font-size:26px;font-weight:500;color:rgba(233,240,250,.85)}
+.sv-sunrow .ic{flex-shrink:0;color:var(--gold)}
+.sv-sunrow .sv-sun-time{direction:ltr;font-variant-numeric:tabular-nums}
 .sv-daily{justify-self:end;text-align:end;max-width:660px;background:rgba(6,10,18,.55);border:1px solid rgba(255,255,255,.10);
   border-radius:24px;padding:30px 36px;overflow:hidden}
 .sv-daily-title{font-size:24px;font-weight:700;color:var(--accent);letter-spacing:.3px}
@@ -560,6 +563,7 @@ i[data-ic]{display:inline-flex;align-items:center;justify-content:center;font-st
             <div class="sv-ampm" id="sv-ampm"></div>
           </div>
           <div class="sv-cityrow" id="sv-cityrow"><span class="sv-dot"></span><span id="sv-by-city"></span></div>
+          <div class="sv-sunrow" id="sv-sunrow" style="display:none"></div>
         </div>
         <div class="sv-daily" id="sv-daily">
           <div class="sv-daily-title" id="sv-daily-title"></div>
@@ -1297,7 +1301,7 @@ const DAILY={"ayah":[{"type":"ayah","ar":"ٱلَّذِينَ ءَامَنُوا�
 const APP_DATA={weather:null,next:null}; /* تُملأ من loadWeather()/calcPrayer() */
 let ssActive=false, ssTickFast=null, ssTickSlow=null, wakeLockSentinel=null, idleTimer=null;
 let ssOccCache=null, ssOccDay='';
-let svBgIdx=0, svBgStarted=false, svBgIsA=true, svLastRotate=0, svSlowCount=0, svPrevDay='', svNextKey='', svWkey='';
+let svBgIdx=0, svBgStarted=false, svBgIsA=true, svLastRotate=0, svSlowCount=0, svPrevDay='', svNextKey='', svWkey='', svSunKey='';
 let svFailedBgs=new Set(); let customWallURL=null;
 
 /* جدول المناسبات الهجرية — (يوم، شهر) هجري + تفعيل من الإعدادات */
@@ -1553,6 +1557,29 @@ function ssSlow(){ /* كل 30 ثانية: التواريخ، الطقس، الم
   const ctz=STATE.city.tz, showTz=!!(ctz&&ctz!=='auto'&&ctz!==devTz);
   document.getElementById('sv-by-city').textContent=showTz?(t('byCity')+' '+STATE.city.name):'';
   document.getElementById('sv-cityrow').style.visibility=showTz?'visible':'hidden';
+  /* الشروق/الغروب القادم تحت الساعة (من مواقيت API الأذان) */
+  const su=document.getElementById('sv-sunrow');
+  if(su){
+    let srM=null, ssM=null;
+    try{
+      if(prayerTimings&&prayerTimings.Sunrise&&prayerTimings.Sunset){
+        srM=(+prayerTimings.Sunrise.substring(0,2))*60+(+prayerTimings.Sunrise.substring(3,5));
+        ssM=(+prayerTimings.Sunset.substring(0,2))*60+(+prayerTimings.Sunset.substring(3,5));
+      }
+    }catch(e){}
+    if(srM!==null&&ssM!==null){
+      const nowMin=now.getHours()*60+now.getMinutes();
+      const isDay=nowMin>=srM&&nowMin<ssM;                    /* نهارنا → الغروب القادم، ليلنا → الشروق القادم */
+      const nxt=isDay?'sunset':'sunrise';
+      const tstr=fmtHM(isDay?prayerTimings.Sunset:prayerTimings.Sunrise).substring(0,5);
+      const key=nxt+tstr;                                       /* شروق الغد بنفس توقيت اليوم (±1 دقيقة) */
+      if(svSunKey!==key){
+        svSunKey=key;
+        su.innerHTML=ic(nxt,24,'color:var(--gold)')+'<span>'+t(nxt)+'</span><span class="sv-sun-time">'+toLatin(tstr)+'</span>';
+      }
+      su.style.display='flex';
+    }else su.style.display='none';
+  }
   /* الطقس من APP_DATA */
   const w=APP_DATA.weather;
   if(w){
