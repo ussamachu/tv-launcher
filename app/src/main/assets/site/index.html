@@ -44,12 +44,14 @@ i[data-ic]{display:inline-flex;align-items:center;justify-content:center;font-st
   padding:34px 64px 38px;display:flex;flex-direction:column;gap:22px}
 
 /* ─── FOCUS ─────────────────────────────────────────────────── */
-.dpad-focusable{outline:none;position:relative;cursor:pointer;transition:transform .2s cubic-bezier(.2,0,0,1),box-shadow .2s,background .2s,color .2s}
-.dpad-focusable.dpad-active{box-shadow:0 0 0 4px #fff,0 0 0 9px rgba(125,180,255,.55),0 18px 44px rgba(0,0,0,.55)!important;transform:scale(1.04);z-index:8}
+/* Focus: cheap transform-only transition — no background/box-shadow repaints.
+   The ring is drawn with outline+thin shadow instead of blurred glows. */
+.dpad-focusable{outline:none;position:relative;cursor:pointer;transition:transform 0.12s ease-out}
+.dpad-focusable.dpad-active{outline:3px solid #fff;box-shadow:0 0 0 6px rgba(125,180,255,.5)!important;transform:scale(1.04);z-index:8}
 
 /* ─── CARD ──────────────────────────────────────────────────── */
 .card{background:rgba(15, 23, 42, 0.88);
-  border:1px solid rgba(255, 255, 255, 0.12);border-radius:24px;box-shadow:0 24px 60px rgba(0,0,0,.35)}
+  border:1px solid rgba(255, 255, 255, 0.12);border-radius:24px;box-shadow:0 4px 12px rgba(0,0,0,.25)}
 
 /* ─── HEADER ────────────────────────────────────────────────── */
 .hdr{display:flex;align-items:center;justify-content:space-between;height:60px;flex-shrink:0}
@@ -124,10 +126,10 @@ i[data-ic]{display:inline-flex;align-items:center;justify-content:center;font-st
 .allapps-btn.dpad-active{background:var(--accent);color:#07111f}
 .dock{display:grid;grid-template-columns:repeat(var(--cols,6),minmax(0,1fr));gap:20px;height:184px;padding:8px 6px 0}
 .tile{border-radius:26px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;
-  background:var(--tbg,#222);color:var(--tfg,#fff);border:1px solid rgba(255,255,255,.14);box-shadow:0 14px 36px rgba(0,0,0,.35);
-  transition:transform .2s cubic-bezier(.2,0,0,1),box-shadow .2s,border-color .2s}
+  background:var(--tbg,#222);color:var(--tfg,#fff);border:1px solid rgba(255,255,255,.14);box-shadow:0 4px 12px rgba(0,0,0,.25);
+  transition:transform 0.12s ease-out,border-color 0.12s ease-out}
 .tile.dpad-focusable.dpad-active{transform:scale(1.08);border-color:var(--accent);
-  box-shadow:0 0 0 4px #fff,0 0 0 9px rgba(125,180,255,.55),0 0 44px rgba(125,180,255,.40),0 24px 56px rgba(0,0,0,.55)!important;z-index:8}
+  outline:3px solid #fff;box-shadow:0 0 0 6px rgba(125,180,255,.5)!important;z-index:8}
 .tile::before{content:'';position:absolute;inset:0;background:linear-gradient(160deg,rgba(255,255,255,.16),transparent 55%)}
 .tile .mark{position:relative;display:flex;align-items:center;justify-content:center;width:96px;height:96px}
 .tile .mark svg{width:auto;height:80px}
@@ -141,7 +143,7 @@ i[data-ic]{display:inline-flex;align-items:center;justify-content:center;font-st
 /* drawer */
 .drawer{position:absolute;left:64px;right:64px;bottom:0;top:auto;height:720px;padding:34px 44px 30px;
   background:rgba(14,20,30,.95);border:1px solid var(--line);border-bottom:none;border-radius:44px 44px 0 0;
-  display:flex;flex-direction:column;gap:22px;box-shadow:0 -30px 80px rgba(0,0,0,.7)}
+  display:flex;flex-direction:column;gap:22px;box-shadow:0 4px 12px rgba(0,0,0,.25)}
 .drawer-top{display:flex;align-items:center;justify-content:space-between}
 .drawer-title{display:flex;align-items:center;gap:14px;font-size:34px;font-weight:700}
 .apps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:22px;overflow-y:auto;padding:14px 8px 20px}
@@ -158,7 +160,7 @@ i[data-ic]{display:inline-flex;align-items:center;justify-content:center;font-st
 .settings-panel{position:absolute;left:204px;top:90px;width:1512px;height:900px;
   background:linear-gradient(165deg,rgba(21,29,43,.985),rgba(9,14,22,.975));
   border:1px solid rgba(255,255,255,.12);border-radius:40px;display:flex;flex-direction:column;overflow:hidden;
-  box-shadow:0 40px 120px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.10)}
+  box-shadow:0 4px 12px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.10)}
 .sp-head{display:flex;align-items:center;justify-content:space-between;padding:24px 36px;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0;
   background:linear-gradient(180deg,rgba(255,255,255,.05),transparent)}
 .sp-title{display:flex;align-items:center;gap:14px;font-size:36px;font-weight:800}
@@ -226,11 +228,9 @@ i[data-ic]{display:inline-flex;align-items:center;justify-content:center;font-st
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
 @keyframes flash{0%,88%,100%{opacity:.15}92%,96%{opacity:1}}
 @keyframes snowf{0%{opacity:0;transform:translateY(-4px)}40%{opacity:1}100%{opacity:0;transform:translateY(7px)}}
-.a-d1{animation:drop 1.2s linear infinite}.a-d2{animation:drop 1.2s linear .4s infinite}.a-d3{animation:drop 1.2s linear .8s infinite}
-.a-s1{animation:snowf 2.2s linear infinite}.a-s2{animation:snowf 2.2s linear .7s infinite}.a-s3{animation:snowf 2.2s linear 1.4s infinite}
-.a-tw1{animation:twinkle 2.6s ease-in-out infinite}.a-tw2{animation:twinkle 3.2s ease-in-out .9s infinite}
-.a-bob{animation:bob 5s ease-in-out infinite}
-.a-flash{animation:flash 3.5s ease-in-out infinite}
+/* Zero-lag: infinite SVG animations disabled — they force the WebView to
+   repaint 60fps continuously on low-power TV boxes for no visible benefit. */
+.a-d1,.a-d2,.a-d3,.a-tw1,.a-tw2,.a-bob,.a-s1,.a-s2,.a-s3,.a-flash{animation:none}
 
 /* ─── SCREENSAVER ─────────────────────────────────── */
 
@@ -655,7 +655,7 @@ function sunG(cx,cy,s){
   for(let i=0;i<8;i++){const a=i*Math.PI/4;
     rays+='<line x1="'+(Math.cos(a)*17).toFixed(1)+'" y1="'+(Math.sin(a)*17).toFixed(1)+'" x2="'+(Math.cos(a)*23).toFixed(1)+'" y2="'+(Math.sin(a)*23).toFixed(1)+'"/>';}
   return '<g transform="translate('+cx+' '+cy+') scale('+s+')"><g stroke="#ffc94d" stroke-width="3.6" stroke-linecap="round">'+rays+
-    '<animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="40s" repeatCount="indefinite"/></g><circle r="11" fill="url(#gSun)"/></g>';
+    '</g><circle r="11" fill="url(#gSun)"/></g>';
 }
 function moonG(x,y,s){return '<g transform="translate('+x+' '+y+') scale('+s+')"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="url(#gMoon)"/></g>';}
 function cloudG(x,y,s,dark){
@@ -884,30 +884,33 @@ function applyI18n(){
 function setLanguage(l){ STATE.lang=l; saveState(); applyI18n(); refreshAll(); }
 
 /* ═══ 9. CLOCK ═══ */
+/* Zero-lag DOM-diff helper: only touch textContent when the value actually changed,
+   so the WebView never re-flows identical 1-second writes. */
+function setText(el,val){ if(el && el.textContent!==val) el.textContent=val; }
+
 function updateClock(){
   const now=new Date(); let h=now.getHours(); const m=pad2(now.getMinutes());
   const am=document.getElementById('hero-ampm');
   if(STATE.clockFormat===12){
     am.style.display='block';
-    am.textContent=h>=12?(STATE.lang==='ar'?'م':'PM'):(STATE.lang==='ar'?'ص':'AM');
+    setText(am,h>=12?(STATE.lang==='ar'?'م':'PM'):(STATE.lang==='ar'?'ص':'AM'));
     h=h%12||12;
   }else am.style.display='none';
-  document.getElementById('hero-clock').textContent=pad2(h)+':'+m;
+  setText(document.getElementById('hero-clock'),pad2(h)+':'+m);
 
   const hr=now.getHours(); let g='night';
   if(hr>=5&&hr<12) g='morning'; else if(hr>=12&&hr<17) g='afternoon'; else if(hr>=17&&hr<22) g='evening';
-  document.getElementById('hero-greeting').textContent=t('greetings',g);
+  setText(document.getElementById('hero-greeting'),t('greetings',g));
 
   const loc=STATE.lang==='ar'?'ar-MA-u-nu-latn':(STATE.lang==='fr'?'fr-FR':'en-US');
-  document.getElementById('hero-greg-date').textContent=toLatin(now.toLocaleDateString(loc,{weekday:'long',year:'numeric',month:'long',day:'numeric'}));
+  setText(document.getElementById('hero-greg-date'),toLatin(now.toLocaleDateString(loc,{weekday:'long',year:'numeric',month:'long',day:'numeric'})));
   let hij='';
   try{
     hij=toLatin(now.toLocaleDateString('ar-u-ca-islamic-umalqura-nu-latn',{year:'numeric',month:'long',day:'numeric'}))
       .replace(/[\s\u00A0]*(هـ|AH)\s*$/i,'').trim()+' '+(STATE.lang==='ar'?'هـ':'AH');
   }catch(e){}
-  document.getElementById('hero-hijri-date').textContent=hij;
+  setText(document.getElementById('hero-hijri-date'),hij);
 }
-setInterval(updateClock,1000);
 
 /* ═══ 10. PRAYER TIMES ═══ */
 let prayerTimings=null, prayersDay='', lastNextKey=null;
@@ -955,10 +958,13 @@ function calcPrayer(){
     b.classList.toggle('past',k!==next.k && pDate(now,k)<now);
   });
   const diff=Math.max(0,Math.floor((next.d-now)/1000));
-  document.getElementById('prayer-countdown').textContent=pad2(Math.floor(diff/3600))+':'+pad2(Math.floor(diff%3600/60))+':'+pad2(diff%60);
+  setText(document.getElementById('prayer-countdown'),pad2(Math.floor(diff/3600))+':'+pad2(Math.floor(diff%3600/60))+':'+pad2(diff%60));
   APP_DATA.next={k:next.k,time:prayerTimings[next.k],rem:diff};
 }
-setInterval(calcPrayer,1000);
+/* Zero-lag: single shared 1-second ticker instead of two competing intervals;
+   each handler already writes to the DOM only when values change (setText). */
+function secondTick(){ updateClock(); calcPrayer(); }
+setInterval(secondTick,1000);
 
 /* ═══ 11. WEATHER ═══ */
 function wDesc(code){
@@ -1522,18 +1528,18 @@ function ssFast(){ /* كل ثانية: الساعة + العد التنازلي 
   const L=STATE.lang, now=cityNow();
   let h=now.getHours(); const m=pad2(now.getMinutes());
   const am=document.getElementById('sv-ampm');
-  if(STATE.clockFormat===12){ am.style.display=''; am.textContent=h>=12?(L==='ar'?'م':'PM'):(L==='ar'?'ص':'AM'); h=h%12||12; }
+  if(STATE.clockFormat===12){ am.style.display=''; setText(am,h>=12?(L==='ar'?'م':'PM'):(L==='ar'?'ص':'AM')); h=h%12||12; }
   else am.style.display='none';
-  document.getElementById('sv-clock').textContent=pad2(h)+':'+m;
+  setText(document.getElementById('sv-clock'),pad2(h)+':'+m);
   const nx=APP_DATA.next;
   if(nx){
     if(svNextKey!==nx.k){
       svNextKey=nx.k;
-      document.getElementById('sv-prayer-name').textContent=t('prayers',nx.k);
-      document.getElementById('sv-prayer-time').textContent=toLatin(fmtHM(nx.time));
+      setText(document.getElementById('sv-prayer-name'),t('prayers',nx.k));
+      setText(document.getElementById('sv-prayer-time'),toLatin(fmtHM(nx.time)));
     }
     const rem=Math.max(0,nx.rem|0);
-    document.getElementById('sv-prayer-rem').textContent=t('inTime')+' '+toLatin(pad2(Math.floor(rem/3600))+':'+pad2(Math.floor(rem%3600/60))+':'+pad2(rem%60));
+    setText(document.getElementById('sv-prayer-rem'),t('inTime')+' '+toLatin(pad2(Math.floor(rem/3600))+':'+pad2(Math.floor(rem%3600/60))+':'+pad2(rem%60)));
   }
 }
 function ssSlow(){ /* كل 30 ثانية: التواريخ، الطقس، المناسبات، الخلفية، الليل، إزاحة التصدع */

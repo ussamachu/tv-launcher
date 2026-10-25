@@ -44,6 +44,11 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Hardware acceleration for the whole window (zero-lag WebView compositing).
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+            WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED
+        )
 
         webView = WebView(this)
         setupWebView()
@@ -62,6 +67,9 @@ class MainActivity : ComponentActivity() {
 
     @Suppress("DEPRECATION")
     private fun setupWebView() {
+        // Render the WebView as a hardware layer — avoids software canvas fallback
+        // which was the main source of lag on low-power TV boxes.
+        webView.setLayerType(View.LAYER_TYPE_HARDWARE, null)
         webView.settings.apply {
             javaScriptEnabled = true
             domStorageEnabled = true
@@ -164,6 +172,9 @@ class MainActivity : ComponentActivity() {
  */
 class AndroidTVBridge(private val activity: MainActivity) {
 
+    /** Session cache of the serialized app list so icons are encoded only once. */
+    private var cachedAppsJson: String? = null
+
     /** Launches an installed TV app by package name (leanback first, then phone starter). */
     @android.webkit.JavascriptInterface
     fun launchApp(pkg: String?) {
@@ -185,11 +196,14 @@ class AndroidTVBridge(private val activity: MainActivity) {
 
     /**
      * Returns all installed (TV-first) apps as:
-     * [{ "pkg": "...", "label": "...", "icon": "data:image/png;base64,..." }, ...]
+     * [{ "pkg": "...", "label": "...", "icon": "data:image/webp;base64,..." }, ...]
      * The launcher's own package is always excluded.
      */
     @android.webkit.JavascriptInterface
     fun getInstalledApps(): String {
+        // Session cache: encoding icons is expensive, so return the cached JSON
+        // immediately when it was already built during this app session.
+        cachedAppsJson?.let { return it }
         return try {
             val pm = activity.packageManager
             val selfPkg = activity.packageName
@@ -222,24 +236,30 @@ class AndroidTVBridge(private val activity: MainActivity) {
                     arr.put(obj)
                 }
             }
-            arr.toString()
+            val json = arr.toString()
+            if (arr.length() > 0) cachedAppsJson = json
+            json
         } catch (_: Exception) {
             "[]"
         }
     }
 
-    /** Scales any app icon down to a 96x96 PNG data URL for fast transfer to the web side. */
+    /**
+     * Scales any app icon down to a tiny 72x72 WEBP (quality 75) data URL.
+     * WEBP @ 72px is roughly 5-8x smaller than a 96px PNG, which makes the
+     * base64 transfer to the web side dramatically cheaper.
+     */
     private fun drawIconAsDataUrl(drawable: Drawable): String {
-        val size = 96
+        val size = 72
         val bmp = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bmp)
         drawable.setBounds(0, 0, size, size)
         drawable.draw(canvas)
 
         val out = ByteArrayOutputStream()
-        bmp.compress(Bitmap.CompressFormat.PNG, 100, out)
+        bmp.compress(Bitmap.CompressFormat.WEBP, 75, out)
         bmp.recycle()
-        return "data:image/png;base64," + Base64.encodeToString(out.toByteArray(), Base64.NO_WRAP)
+        return "data:image/webp;base64," + Base64.encodeToString(out.toByteArray(), Base64.NO_WRAP)
     }
 
     /** Reports the active network as "ethernet", "wifi", or "none". */
