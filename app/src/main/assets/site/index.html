@@ -18,9 +18,6 @@
   --ink3:rgba(255,255,255,.50);
   --line:rgba(255,255,255,.14);
   --card:rgba(15,23,42,0.88);
-  /* حجم البطاقات — عدّل هاتين القيمتين فقط لتصغير أو تكبير البطاقتين */
-  --prayer-card-h:236px;
-  --weather-card-h:328px;
   --font-app:'IBM Plex Sans Arabic',system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
 }
 html,body{width:100%;height:100%;overflow:hidden;background:#05080d;color:var(--ink);
@@ -63,7 +60,7 @@ i[data-ic]{display:inline-flex;align-items:center;justify-content:center;font-st
   display:flex;align-items:center;justify-content:center;color:#fff}
 
 /* ─── MAIN GRID ─────────────────────────────────────────────── */
-.main{flex:1;min-height:0;display:grid;grid-template-columns:540px 1fr;gap:32px}
+.main{flex:1;min-height:0;display:flex;align-items:center;justify-content:space-between;gap:40px}
 
 /* HERO */
 .hero{display:flex;flex-direction:column;justify-content:flex-start;align-items:flex-start;padding-top:4px;min-width:0}
@@ -75,46 +72,45 @@ i[data-ic]{display:inline-flex;align-items:center;justify-content:center;font-st
 .hero-date{font-size:26px;font-weight:500;color:var(--ink2)}
 .hero-hijri{font-size:22px;font-weight:500;color:var(--gold);margin-top:8px}
 
-/* CARDS COLUMN */
-.cards{display:flex;flex-direction:column;justify-content:center;gap:20px;min-height:0;min-width:0}
+/* CARDS ROW (Square Widgets Side-by-Side) */
+.cards{display:flex;flex-direction:row;align-items:center;justify-content:flex-end;gap:28px;flex:none}
 
-/* PRAYER CARD — widget compact */
-#prayer-card{flex:none;height:var(--prayer-card-h);padding:14px 24px 16px;display:flex;flex-direction:column;justify-content:space-between;gap:10px}
-.p-top{display:flex;align-items:center;justify-content:space-between}
-.p-badge{font-size:17px;font-weight:700;color:var(--gold);display:flex;align-items:center;gap:8px}
-.p-capsule{display:flex;align-items:center;gap:14px;background:rgba(255,198,92,.10);border:1px solid rgba(255,198,92,.38);
-  border-radius:44px;padding:6px 10px 6px 26px;box-shadow:0 0 26px rgba(255,198,92,.10)}
-.p-capsule .p-name{font-size:32px;font-weight:800;line-height:1}
-.p-capsule .p-count{font-size:30px;font-weight:700;color:#ffd98a;direction:ltr;font-variant-numeric:tabular-nums}
-.p-mid{display:flex;align-items:center;justify-content:center;min-height:0;flex:1}
-.prayer-svg{width:132px;height:92px;display:flex;align-items:center;justify-content:center}
+/* PRAYER CARD — Square Widget */
+#prayer-card{width:380px;height:380px;padding:26px 24px 22px;border-radius:38px;display:flex;flex-direction:column;justify-content:space-between;gap:8px;flex:none}
+.p-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.p-badge{font-size:16px;font-weight:600;color:var(--ink3);display:flex;align-items:center;gap:6px}
+.p-capsule{display:flex;flex-direction:column;align-items:flex-end;background:none;border:none;padding:0;box-shadow:none;gap:4px}
+.p-capsule .p-name{font-size:28px;font-weight:700;color:var(--gold);line-height:1.1}
+.p-capsule .p-count{font-size:44px;font-weight:400;color:#fff;direction:ltr;line-height:1;letter-spacing:-1px;font-variant-numeric:tabular-nums}
+.p-mid{display:flex;align-items:center;justify-content:center;flex:1;min-height:0}
+.prayer-svg{width:118px;height:118px;display:flex;align-items:center;justify-content:center}
 .prayer-svg svg{width:100%;height:100%}
-.p-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding-top:4px;border-top:1px solid rgba(255,255,255,.08)}
-.pr{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px 6px;border-radius:16px;color:var(--ink3);position:relative}
-.pr .pi{color:var(--ink3);transition:color .3s}
-.pr .pn{font-size:18px;font-weight:600}
-.pr .pt{font-size:25px;font-weight:700;color:var(--ink2);direction:ltr;font-variant-numeric:tabular-nums}
-.pr.calm{color:#ffe3a6;background:linear-gradient(180deg,rgba(255,198,92,.16),rgba(255,198,92,.05));box-shadow:0 0 22px rgba(255,198,92,.12)}
-.pr.calm .pi,.pr.calm .pn{color:#ffe3a6}
+.p-row{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding-top:10px;border-top:none}
+.pr{display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 2px;border-radius:14px;color:var(--ink3)}
+.pr .pi{display:none}
+.pr .pn{font-size:14px;font-weight:500;color:var(--ink3)}
+.pr .pt{font-size:17px;font-weight:700;color:var(--ink2);direction:ltr;font-variant-numeric:tabular-nums}
+.pr.calm{color:var(--gold);background:rgba(255,198,92,.12);box-shadow:none}
+.pr.calm .pn{color:var(--gold);font-weight:700}
 .pr.calm .pt{color:#fff}
-.pr.past{opacity:.45}
+.pr.past{opacity:.4}
 
-/* WEATHER CARD — widget compact */
-#weather-card{flex:none;height:var(--weather-card-h);min-height:0;padding:18px 28px 20px;display:flex;flex-direction:column;justify-content:space-between;gap:8px}
-.w-top{display:flex;align-items:center;justify-content:space-between}
-.w-temp{font-size:84px;font-weight:700;line-height:1;letter-spacing:-3px;direction:ltr}
-.w-city-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:6px;text-align:end}
-.w-city-name{font-size:30px;font-weight:700;color:#fff}
-.w-cond{font-size:22px;font-weight:500;color:var(--ink2)}
-.w-mid{display:flex;align-items:center;justify-content:center;min-height:0;flex:1}
-.w-icon{width:150px;height:108px;display:flex;align-items:center;justify-content:center}
+/* WEATHER CARD — Square Widget (San Francisco iOS Style) */
+#weather-card{width:380px;height:380px;padding:26px 24px 22px;border-radius:38px;display:flex;flex-direction:column;justify-content:space-between;gap:8px;flex:none}
+.w-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.w-temp{font-size:76px;font-weight:300;line-height:0.95;letter-spacing:-3px;direction:ltr;color:#fff}
+.w-city-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:4px;text-align:end;padding-top:4px}
+.w-city-name{font-size:22px;font-weight:700;color:#fff;line-height:1.2}
+.w-cond{font-size:16px;font-weight:400;color:var(--ink3);line-height:1.3}
+.w-mid{display:flex;align-items:center;justify-content:center;flex:1;min-height:0}
+.w-icon{width:128px;height:128px;display:flex;align-items:center;justify-content:center}
 .w-icon svg{width:100%;height:100%}
-.w-hourly{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;padding-top:10px;border-top:1px solid rgba(255,255,255,.10)}
-.hcell{display:flex;flex-direction:column;align-items:center;gap:4px;border-radius:14px;padding:2px 4px}
-.hcell .ht{font-size:17px;color:var(--ink3);font-weight:600}
-.hcell .hi{width:46px;height:46px}.hcell .hi svg{width:100%;height:100%}
-.hcell .hd{font-size:25px;font-weight:700;direction:ltr}
-.hcell .hp{font-size:15px;color:#8cc4ff;display:flex;align-items:center;gap:3px;height:18px}
+.w-hourly{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;padding-top:10px;border-top:none}
+.hcell{display:flex;flex-direction:column;align-items:center;gap:4px;padding:2px}
+.hcell .ht{font-size:13px;color:var(--ink3);font-weight:500}
+.hcell .hi{width:30px;height:30px}.hcell .hi svg{width:100%;height:100%}
+.hcell .hd{font-size:17px;font-weight:700;direction:ltr;color:#fff}
+.hcell .hp{display:none}
 
 /* ─── DOCK ──────────────────────────────────────────────────── */
 .dock-wrap{flex-shrink:0;display:flex;flex-direction:column;gap:10px}
@@ -727,13 +723,13 @@ const I18N = {
 };
 
 const BUILTIN_WALLPAPERS = [
-  {id:'wall-chefchaouen',name:'شفشاون',url:'https://unsplash.com/photos/i-P1lmY_e1w/download?force=true&w=1920'},
-  {id:'wall-koutoubia',name:'الكتبية مراكش',url:'https://unsplash.com/photos/CFKksjYRSQ8/download?force=true&w=1920'},
-  {id:'wall-essaouira',name:'الصويرة',url:'https://unsplash.com/photos/TYHyrF56Gys/download?force=true&w=1920'}
+  {id:'wall-chefchaouen',name:'شفشاون',url:'wallpapers/wall1.jpg'},
+  {id:'wall-koutoubia',name:'الكتبية مراكش',url:'wallpapers/wall2.jpg'},
+  {id:'wall-essaouira',name:'الصويرة',url:'wallpapers/wall3.jpg'}
 ];
 
 /* ═══ 5. STATE ═══ */
-const PREFS_KEY = 'tv_launcher_v7_prefs';
+const PREFS_KEY = 'tv_launcher_v8_prefs';
 let STATE = {
   lang:'ar',
   city:{name:'أكادير',lat:30.4278,lon:-9.5981,country:'المغرب',tz:'Africa/Casablanca'},
@@ -1138,80 +1134,15 @@ async function saveWallpaperDB(u){ const d=await openDB(); if(!d) return; d.tran
 async function loadWallpaperDB(){ const d=await openDB(); if(!d) return null; return new Promise(res=>{ const q=d.transaction('wallpapers','readonly').objectStore('wallpapers').get('current'); q.onsuccess=()=>res(q.result||null); q.onerror=()=>res(null); }); }
 function applyWallpaper(u){ document.getElementById('bg').style.backgroundImage="url('"+u+"')"; }
 
-/* ─── تخزين الخلفيات سحابياً → ضغط Base64 في IndexedDB (فتح فوري + عمل كامل دون إنترنت) ─── */
-let wallURLCache={};                 /* id → dataURL (ذاكرة سريعة) */
-async function loadWallDB(key){
-  const d=await openDB(); if(!d) return null;
-  return new Promise(res=>{ try{ const q=d.transaction('wallpapers','readonly').objectStore('wallpapers').get(key);
-    q.onsuccess=()=>res(q.result||null); q.onerror=()=>res(null); }catch(e){ res(null); } });
-}
-async function saveWallDB(key,url){
-  const d=await openDB(); if(!d) return;
-  try{ d.transaction('wallpapers','readwrite').objectStore('wallpapers').put(url,key); }catch(e){}
-}
-/* تحميل الصورة → قص إلى 1920px → ضغط JPEG 0.8 → DataURL */
-function fetchWallpaperDataURL(url){
-  return new Promise((resolve,reject)=>{
-    if(!navigator.onLine){ reject(new Error('offline')); return; }
-    fetch(url,{cache:'force-cache'}).then(r=>{
-      if(!r.ok) throw new Error('http '+r.status);
-      return r.blob();
-    }).then(blob=>{
-      const objURL=URL.createObjectURL(blob);
-      const img=new Image();
-      img.onload=()=>{
-        try{
-          const maxW=1920;
-          const ratio=Math.min(1,maxW/img.naturalWidth);
-          const cv=document.createElement('canvas');
-          cv.width=Math.round(img.naturalWidth*ratio); cv.height=Math.round(img.naturalHeight*ratio);
-          const ctx=cv.getContext('2d');
-          ctx.drawImage(img,0,0,cv.width,cv.height);
-          const dataURL=cv.toDataURL('image/jpeg',0.8);
-          URL.revokeObjectURL(objURL);
-          resolve(dataURL);
-        }catch(e){ URL.revokeObjectURL(objURL); reject(e); }
-      };
-      img.onerror=()=>{ URL.revokeObjectURL(objURL); reject(new Error('img decode fail')); };
-      img.src=objURL;
-    }).catch(reject);
-  });
-}
-function isDataURL(u){ return String(u).indexOf('data:image/')===0; }
-/* رابط أهلاً للعرض للخلفية: الكاش الجاهز (DataURL) إن وُجد وإلا الرابط الخام */
+/* ─── خلفيات مدمجة محليّة (assets) → فتح فوري بدون إنترنت وبدون كاش ─── */
 function wallURLFor(id){
   const w=BUILTIN_WALLPAPERS.find(x=>x.id===id)||BUILTIN_WALLPAPERS[0];
-  return wallURLCache[w.id]||w.url;
+  return w.url;
 }
-/* ضمان تخزين خلفية معيّنة (لمرة واحدة لكل تشغيل) ثم أتاحتها للعرض الفوري */
-async function ensureWallCached(id,save){
-  const w=BUILTIN_WALLPAPERS.find(x=>x.id===id); if(!w) return null;
-  if(wallURLCache[w.id]) return wallURLCache[w.id];
-  const key='wall_'+w.id;
-  const cached=await loadWallDB(key);
-  if(cached&&isDataURL(cached)){ wallURLCache[w.id]=cached; return cached; }
-  try{
-    const dataURL=await fetchWallpaperDataURL(w.url);
-    wallURLCache[w.id]=dataURL;
-    if(save!==false) await saveWallDB(key,dataURL);
-    return dataURL;
-  }catch(e){
-    /* فشل التنزيل أو ضغط القماش (CORS): رجوع إلى الرابط الخام */
-    wallURLCache[w.id]=null;
-    return null;
-  }
-}
-/* تطبيق خلفية معيّنة مع مراعاة الكاش والدونلود المسبق */
 async function applyWallpaperForId(id){
   const w=BUILTIN_WALLPAPERS.find(x=>x.id===id)||BUILTIN_WALLPAPERS[0];
   if(STATE.wallpaperCustom) return;          /* خلفية مخصصة نشطة — لا شيء هنا */
-  const dataURL=await ensureWallCached(w.id);
-  if(wallURLCache[w.id]&&isDataURL(wallURLCache[w.id])){
-    applyWallpaper(wallURLCache[w.id]); return;
-  }
-  if(dataURL){ applyWallpaper(dataURL); return; }
-  /* لا كاش بعد (فشل/بلا إنترنت): الرابط الخام إن نفع، وإلا يبقى التدرّج الداكن الافتراضي */
-  if(navigator.onLine) applyWallpaper(w.url);
+  applyWallpaper(w.url);
 }
 
 function renderWallpapersStrip(){
@@ -1221,7 +1152,7 @@ function renderWallpapersStrip(){
       const b=document.createElement('div');
       b.className='wp dpad-focusable'+((!STATE.wallpaperCustom&&STATE.wallpaperId===w.id)?' active':'');
       b.tabIndex=0; b.dataset.fk='wp-'+w.id; b.title=w.name;
-      /* الصورة المصغّرة: الكاش إن وُجد (DataURL فوري + دعم offline)، وإلا الرابط الخام */
+      /* الصورة المصغّرة من الأصول المحلية مباشرة */
       b.style.backgroundImage="url('"+wallURLFor(w.id)+"')";
       b.onclick=async()=>{
         STATE.wallpaperId=w.id; STATE.wallpaperCustom=null; saveState();
@@ -1245,16 +1176,12 @@ function handleWallpaperFile(e){
   const r=new FileReader(); r.onload=ev=>setCustomWallpaper(ev.target.result); r.readAsDataURL(f);
 }
 async function initWallpaper(){
+  /* مسح كاش الخلفيات القديم (IndexedDB) كلياً: الخلفيات أصبحت أصولاً محلية مضغوطة */
+  try{ indexedDB.deleteDatabase('TVLauncherDB'); }catch(e){}
+  STATE.wallpaperCustom = null;
+  if(!BUILTIN_WALLPAPERS.some(w=>w.id===STATE.wallpaperId)) STATE.wallpaperId = BUILTIN_WALLPAPERS[0].id;
   renderWallpapersStrip();
-  /* خلفية مخصصة محفوظة في IndexedDB تحت المفتاح 'current' */
-  const c=await loadWallpaperDB();
-  if(c) customWallURL=c;
-  if(c&&STATE.wallpaperCustom){ applyWallpaper(c); return; }
-  await applyWallpaperForId(STATE.wallpaperId||BUILTIN_WALLPAPERS[0].id);
-  /* بعد الخمول ~4 ثوان: تخزين بقية الخلفيات الثلاث مسبقاً (ضغط + IndexedDB) للفوريّة لاحقاً */
-  setTimeout(()=>{
-    BUILTIN_WALLPAPERS.filter(w=>w.id!==STATE.wallpaperId).forEach(w=>ensureWallCached(w.id));
-  },4000);
+  applyWallpaperForId(STATE.wallpaperId);
 }
 
 /* ═══ 15. SETTINGS ═══ */
