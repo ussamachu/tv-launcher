@@ -19,7 +19,7 @@
     </queries>
 
     <application
-        android:label="Al-Minhaj"
+        android:label="Mashhad"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:banner="@mipmap/ic_launcher"

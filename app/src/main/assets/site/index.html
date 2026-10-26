@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>TV Launcher</title>
+<title>Mashhad TV</title>
 <style>/* Fonts bundled locally - zero network requests, instant load offline */
 /* arabic */
 @font-face {
@@ -337,6 +337,22 @@ i[data-ic]{display:inline-flex;align-items:center;justify-content:center;font-st
 /* إبقاء الأيقونات الـ 6 الصغيرة في شريط الساعات ثابتة لمنع أي حمل على المعالج */
 .w-hourly *{animation:none !important}
 
+/* ─── QR: صنع بواسطة أسامة ─────────────────────────── */
+
+#qr-overlay{position:absolute;inset:-40px -64px;z-index:60;display:none;align-items:center;justify-content:center;background:rgba(3,6,12,.86)}
+#qr-overlay.open{display:flex}
+.qr-card{position:relative;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;
+  background:linear-gradient(160deg,#101a30,#0a1120);border:1px solid rgba(125,150,220,.28);border-radius:22px;
+  padding:34px 46px 28px;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.qr-photo{width:300px;height:300px;box-sizing:border-box;padding:16px;background:#fff;border-radius:18px;display:block;
+  box-shadow:0 12px 36px rgba(0,0,0,.5)}
+.qr-t1{font-size:27px;font-weight:700;color:#fff;margin-top:4px}
+.qr-t2{font-size:16px;color:rgba(224,232,255,.72)}
+.qr-url{font-size:14px;color:rgba(151,190,255,.85);letter-spacing:.2px}
+.qr-close{margin-top:14px;min-width:190px;padding:12px 26px;border-radius:14px;border:1px solid rgba(255,255,255,.28);
+  background:rgba(35,52,92,.85);color:#fff;font-family:inherit;font-size:17px;font-weight:600;cursor:pointer}
+.qr-close.dpad-active{outline:none !important;box-shadow:0 0 0 3px #fff, 0 0 0 7px rgba(125,180,255,.55) !important}
+
 /* ─── SCREENSAVER ─────────────────────────────────── */
 
 #screensaver-overlay{position:fixed;inset:0;z-index:200;display:flex;align-items:stretch;background:#05080d;
@@ -641,6 +657,17 @@ i[data-ic]{display:inline-flex;align-items:center;justify-content:center;font-st
     </div>
   </div>
 
+  <!-- QR: صنع بواسطة أسامة -->
+  <div id="qr-overlay" aria-hidden="true">
+    <div class="qr-card">
+      <img class="qr-photo" id="qr-img" src="qr.png" alt="QR">
+      <div class="qr-t1" data-i18n="devTitle"></div>
+      <div class="qr-t2" data-i18n="devQrHint"></div>
+      <div class="qr-url">oussamachu.framer.website</div>
+      <button class="qr-close dpad-focusable" id="qr-close" tabindex="0" onclick="hideQr()"><span data-i18n="devQrClose"></span></button>
+    </div>
+  </div>
+
 </div><!-- /stage -->
 
   <!-- SCREENSAVER -->
@@ -837,9 +864,9 @@ function syncInstalledApps(){
 
 /* ═══ 4. I18N ═══ */
 const I18N = {
-  ar:{home:'الرئيسية',allApps:'كل التطبيقات',settings:'الإعدادات',dockTitle:'شريط التطبيقات المفضلة',dockCountLbl:'عدد التطبيقات في الشريط',dockMgmtLbl:'إدارة وترتيب المفضلة',cardsTitle:'البطاقات المعروضة',cardPrayerLbl:'بطاقة مواقيت الصلاة',cardWeatherLbl:'بطاقة الطقس',locTitle:'الموقع والمدينة',searchPlaceholder:'ابحث عن أي مدينة (أكادير، طنجة، باريس...)',searchBtn:'بحث',searching:'جاري البحث...',noResults:'لا توجد نتائج مطابقة',methodTitle:'حساب الصلاة',methodAwqaf:'وزارة الأوقاف (المغرب)',methodUmmAlQura:'أم القرى (مكة)',prefsTitle:'التفضيلات',langLbl:'اللغة',tempLbl:'الحرارة',clockLbl:'الساعة',clockOffsetLbl:'تصحيح الساعة',wallTitle:'الخلفيات',galleryBtn:'اختيار خلفية من المعرض',devTitle:'صنع بواسطة أسامة',wifi:'واي فاي',ethernet:'إيثرنت',offline:'غير متصل',nextPrayerBadge:'الصلاة القادمة',nextPrayerChip:'القادمة',adhan:'الأذان',now:'الآن',prayers:{Fajr:'الفجر',Sunrise:'الشروق',Dhuhr:'الظهر',Asr:'العصر',Maghrib:'المغرب',Isha:'العشاء'},feels:'المحسوسة',humidity:'الرطوبة',wind:'الرياح',speedUnit:'كم/س',high:'العظمى',low:'الصغرى',sunrise:'الشروق',sunset:'الغروب',greetings:{morning:'صباح الخير.',afternoon:'نهارك سعيد.',evening:'مساء الخير.',night:'ليلة طيبة.'},weather:{clear:'صافٍ',mostlyClear:'صافٍ غالباً',partlyCloudy:'غائم جزئياً',overcast:'غائم',fog:'ضباب',drizzle:'رذاذ',rain:'مطر',snow:'ثلوج',thunder:'عاصفة رعدية',day:'نهاراً',night:'ليلاً'},ssTitle:'شاشة التوقف',ssIdleLbl:'التفعيل التلقائي بعد الدخول',ssPreviewBtn:'معاينة شاشة التوقف',hadithDay:'حديث اليوم',byCity:'بتوقيت',inTime:'بعد',ssBgLbl:'خلفية شاشة التوقف',ssBgSame:'نفس الرئيسية',ssDailyLbl:'المحتوى اليومي',dailyBoth:'آية + حديث',dailyAyah:'آية فقط',dailyHadith:'حديث فقط',dailyTitleAyah:'آية اليوم',dailyTitleHadith:'حديث اليوم',dailyTitleBoth:'آية وحديث اليوم',lastUpdated:'آخر تحديث الساعة {t}',hijriOffsetLbl:'تعديل التاريخ الهجري',ssNightDimLbl:'خفض الإضاءة ليلاً',occTitle:'المناسبات الإسلامية',occasions:{ramadan:'رمضان',qadr:'ليلة القدر',fitr:'عيد الفطر',arafah:'يوم عرفة',adha:'عيد الأضحى',newyear:'رأس السنة الهجرية',ashura:'يوم عاشوراء',mawlid:'المولد النبوي الشريف',isra:'ليلة الإسراء والمعراج'},occDayOf:{ramadan:'اليوم بداية شهر رمضان',qadr:'اليوم ليلة القدر المباركة',fitr:'اليوم عيد الفطر المبارك',arafah:'اليوم يوم عرفة',adha:'اليوم عيد الأضحى المبارك',newyear:'اليوم رأس السنة الهجرية',ashura:'اليوم يوم عاشوراء',mawlid:'اليوم المولد النبوي الشريف',isra:'اليوم ذكرى الإسراء والمعراج'},occTodayPrefix:'اليوم',occGreeting:'كل عام وأنتم بخير',occThen:'ثم',occRamadanDay:'اليوم {n} من رمضان',minute:'دقيقة'},
-  fr:{home:'Accueil',allApps:'Toutes les apps',settings:'Paramètres du Launcher',dockTitle:'Dock des favoris',dockCountLbl:"Nombre d'applications",dockMgmtLbl:'Gérer et organiser',cardsTitle:'Cartes affichées',cardPrayerLbl:'Carte des prières',cardWeatherLbl:'Carte météo',locTitle:'Localisation',searchPlaceholder:'Rechercher une ville (Paris, Rabat...)',searchBtn:'Rechercher',searching:'Recherche...',noResults:'Aucun résultat',methodTitle:'Calcul des prières',methodAwqaf:'Habous (Maroc)',methodUmmAlQura:'Oumm Al-Qura (La Mecque)',prefsTitle:'Préférences',langLbl:'Langue',tempLbl:'Température',clockLbl:'Horloge',clockOffsetLbl:'Décalage horaire',wallTitle:'Fonds d’écran',galleryBtn:'Choisir depuis la galerie',devTitle:'Créé par Ossamah',wifi:'Wi-Fi',ethernet:'Ethernet',offline:'Hors ligne',nextPrayerBadge:'Prochaine prière',nextPrayerChip:'Suivante',adhan:'Adhan',now:'Now',prayers:{Fajr:'Fajr',Sunrise:'Lever',Dhuhr:'Dhuhr',Asr:'Asr',Maghrib:'Maghrib',Isha:'Isha'},feels:'Ressentie',humidity:'Humidité',wind:'Vent',speedUnit:'km/h',high:'Max',low:'Min',sunrise:'Lever',sunset:'Coucher',greetings:{morning:'Bonjour.',afternoon:'Bon après-midi.',evening:'Bonsoir.',night:'Bonne nuit.'},weather:{clear:'Dégagé',mostlyClear:'Plutôt dégagé',partlyCloudy:'Peu nuageux',overcast:'Couvert',fog:'Brouillard',drizzle:'Bruine',rain:'Pluie',snow:'Neige',thunder:'Orages',day:'Jour',night:'Nuit'},ssTitle:'Écran de veille',ssIdleLbl:'Activation automatique après',ssPreviewBtn:'Aperçu de l\'écran de veille',hadithDay:'Hadith du jour',byCity:'Heure locale de',inTime:'Dans',ssBgLbl:'Fond de la veille',ssBgSame:'Comme l\'accueil',ssDailyLbl:'Contenu du jour',dailyBoth:'Verset + Hadith',dailyAyah:'Verset seulement',dailyHadith:'Hadith seulement',dailyTitleAyah:'Verset du jour',dailyTitleHadith:'Hadith du jour',dailyTitleBoth:'Verset & Hadith du jour',lastUpdated:'Mis à jour à {t}',hijriOffsetLbl:'Décalage du calendrier hégirien',ssNightDimLbl:'Assombrissement nocturne',occTitle:'Occasions islamiques',occasions:{ramadan:'Ramadan',qadr:'Laylat al-Qadr',fitr:'Aïd el-Fitr',arafah:'Arafat',adha:'Aïd al-Adha',newyear:'Nouvel an hégirien',ashura:'Achoura',mawlid:'Mawlid',isra:'Isra & Miraj'},occTodayPrefix:'Aujourd\u2019hui :',occGreeting:'Bonne occasion à tous',occThen:'Puis',occRamadanDay:'Jour {n} du Ramadan',minute:'min'},
-  en:{home:'Home',allApps:'All Apps',settings:'Launcher Settings',dockTitle:'Favorites Dock',dockCountLbl:'Apps on dock',dockMgmtLbl:'Manage & organize',cardsTitle:'Displayed cards',cardPrayerLbl:'Prayer times card',cardWeatherLbl:'Weather card',locTitle:'Location',searchPlaceholder:'Search any city (Agadir, London...)',searchBtn:'Search',searching:'Searching...',noResults:'No matching cities',methodTitle:'Prayer method',methodAwqaf:'Awqaf (Morocco)',methodUmmAlQura:'Umm Al-Qura (Makkah)',prefsTitle:'Preferences',langLbl:'Language',tempLbl:'Temperature',clockLbl:'Clock',clockOffsetLbl:'Clock offset',wallTitle:'Wallpapers',galleryBtn:'Choose from gallery',devTitle:'Made by Ossamah',wifi:'Wi-Fi',ethernet:'Ethernet',offline:'Offline',nextPrayerBadge:'Next prayer',nextPrayerChip:'Next',adhan:'Adhan',now:'Now',prayers:{Fajr:'Fajr',Sunrise:'Sunrise',Dhuhr:'Dhuhr',Asr:'Asr',Maghrib:'Maghrib',Isha:'Isha'},feels:'Feels like',humidity:'Humidity',wind:'Wind',speedUnit:'km/h',high:'High',low:'Low',sunrise:'Sunrise',sunset:'Sunset',greetings:{morning:'Good morning.',afternoon:'Good afternoon.',evening:'Good evening.',night:'Good night.'},weather:{clear:'Clear',mostlyClear:'Mostly clear',partlyCloudy:'Partly cloudy',overcast:'Overcast',fog:'Foggy',drizzle:'Drizzle',rain:'Rain',snow:'Snow',thunder:'Thunderstorms',day:'Day',night:'Night'},ssTitle:'Idle screensaver',ssIdleLbl:'Auto-activate after idle',ssPreviewBtn:'Preview screensaver',hadithDay:'Hadith of the day',byCity:'Local time in',inTime:'In',ssBgLbl:'Screensaver background',ssBgSame:'Same as home',ssDailyLbl:'Daily content',dailyBoth:'Ayah + Hadith',dailyAyah:'Ayah only',dailyHadith:'Hadith only',dailyTitleAyah:'Ayah of the day',dailyTitleHadith:'Hadith of the day',dailyTitleBoth:'Ayah & Hadith of the day',lastUpdated:'Last updated {t}',hijriOffsetLbl:'Hijri date offset',ssNightDimLbl:'Night dimming',occTitle:'Islamic occasions',occasions:{ramadan:'Ramadan',qadr:'Laylat al-Qadr',fitr:'Eid al-Fitr',arafah:'Arafah',adha:'Eid al-Adha',newyear:'Hijri New Year',ashura:'Ashura',mawlid:'Mawlid',isra:'Isra & Miraj'},occTodayPrefix:'Today:',occGreeting:'A blessed occasion to all',occThen:'Then',occRamadanDay:'Day {n} of Ramadan',minute:'min'}
+  ar:{home:'الرئيسية',allApps:'كل التطبيقات',settings:'الإعدادات',dockTitle:'شريط التطبيقات المفضلة',dockCountLbl:'عدد التطبيقات في الشريط',dockMgmtLbl:'إدارة وترتيب المفضلة',cardsTitle:'البطاقات المعروضة',cardPrayerLbl:'بطاقة مواقيت الصلاة',cardWeatherLbl:'بطاقة الطقس',locTitle:'الموقع والمدينة',searchPlaceholder:'ابحث عن أي مدينة (أكادير، طنجة، باريس...)',searchBtn:'بحث',searching:'جاري البحث...',noResults:'لا توجد نتائج مطابقة',methodTitle:'حساب الصلاة',methodAwqaf:'وزارة الأوقاف (المغرب)',methodUmmAlQura:'أم القرى (مكة)',prefsTitle:'التفضيلات',langLbl:'اللغة',tempLbl:'الحرارة',clockLbl:'الساعة',clockOffsetLbl:'تصحيح الساعة',wallTitle:'الخلفيات',galleryBtn:'اختيار خلفية من المعرض',devTitle:'صنع بواسطة أسامة',devQrHint:'امسح الرمز بكاميرا هاتفك',devQrClose:'إغلاق',wifi:'واي فاي',ethernet:'إيثرنت',offline:'غير متصل',nextPrayerBadge:'الصلاة القادمة',nextPrayerChip:'القادمة',adhan:'الأذان',now:'الآن',prayers:{Fajr:'الفجر',Sunrise:'الشروق',Dhuhr:'الظهر',Asr:'العصر',Maghrib:'المغرب',Isha:'العشاء'},feels:'المحسوسة',humidity:'الرطوبة',wind:'الرياح',speedUnit:'كم/س',high:'العظمى',low:'الصغرى',sunrise:'الشروق',sunset:'الغروب',greetings:{morning:'صباح الخير.',afternoon:'نهارك سعيد.',evening:'مساء الخير.',night:'ليلة طيبة.'},weather:{clear:'صافٍ',mostlyClear:'صافٍ غالباً',partlyCloudy:'غائم جزئياً',overcast:'غائم',fog:'ضباب',drizzle:'رذاذ',rain:'مطر',snow:'ثلوج',thunder:'عاصفة رعدية',day:'نهاراً',night:'ليلاً'},ssTitle:'شاشة التوقف',ssIdleLbl:'التفعيل التلقائي بعد الدخول',ssPreviewBtn:'معاينة شاشة التوقف',hadithDay:'حديث اليوم',byCity:'بتوقيت',inTime:'بعد',ssBgLbl:'خلفية شاشة التوقف',ssBgSame:'نفس الرئيسية',ssDailyLbl:'المحتوى اليومي',dailyBoth:'آية + حديث',dailyAyah:'آية فقط',dailyHadith:'حديث فقط',dailyTitleAyah:'آية اليوم',dailyTitleHadith:'حديث اليوم',dailyTitleBoth:'آية وحديث اليوم',lastUpdated:'آخر تحديث الساعة {t}',hijriOffsetLbl:'تعديل التاريخ الهجري',ssNightDimLbl:'خفض الإضاءة ليلاً',occTitle:'المناسبات الإسلامية',occasions:{ramadan:'رمضان',qadr:'ليلة القدر',fitr:'عيد الفطر',arafah:'يوم عرفة',adha:'عيد الأضحى',newyear:'رأس السنة الهجرية',ashura:'يوم عاشوراء',mawlid:'المولد النبوي الشريف',isra:'ليلة الإسراء والمعراج'},occDayOf:{ramadan:'اليوم بداية شهر رمضان',qadr:'اليوم ليلة القدر المباركة',fitr:'اليوم عيد الفطر المبارك',arafah:'اليوم يوم عرفة',adha:'اليوم عيد الأضحى المبارك',newyear:'اليوم رأس السنة الهجرية',ashura:'اليوم يوم عاشوراء',mawlid:'اليوم المولد النبوي الشريف',isra:'اليوم ذكرى الإسراء والمعراج'},occTodayPrefix:'اليوم',occGreeting:'كل عام وأنتم بخير',occThen:'ثم',occRamadanDay:'اليوم {n} من رمضان',minute:'دقيقة'},
+  fr:{home:'Accueil',allApps:'Toutes les apps',settings:'Paramètres du Launcher',dockTitle:'Dock des favoris',dockCountLbl:"Nombre d'applications",dockMgmtLbl:'Gérer et organiser',cardsTitle:'Cartes affichées',cardPrayerLbl:'Carte des prières',cardWeatherLbl:'Carte météo',locTitle:'Localisation',searchPlaceholder:'Rechercher une ville (Paris, Rabat...)',searchBtn:'Rechercher',searching:'Recherche...',noResults:'Aucun résultat',methodTitle:'Calcul des prières',methodAwqaf:'Habous (Maroc)',methodUmmAlQura:'Oumm Al-Qura (La Mecque)',prefsTitle:'Préférences',langLbl:'Langue',tempLbl:'Température',clockLbl:'Horloge',clockOffsetLbl:'Décalage horaire',wallTitle:'Fonds d’écran',galleryBtn:'Choisir depuis la galerie',devTitle:'Créé par Ossamah',devQrHint:'Scannez le QR avec votre téléphone',devQrClose:'Fermer',wifi:'Wi-Fi',ethernet:'Ethernet',offline:'Hors ligne',nextPrayerBadge:'Prochaine prière',nextPrayerChip:'Suivante',adhan:'Adhan',now:'Now',prayers:{Fajr:'Fajr',Sunrise:'Lever',Dhuhr:'Dhuhr',Asr:'Asr',Maghrib:'Maghrib',Isha:'Isha'},feels:'Ressentie',humidity:'Humidité',wind:'Vent',speedUnit:'km/h',high:'Max',low:'Min',sunrise:'Lever',sunset:'Coucher',greetings:{morning:'Bonjour.',afternoon:'Bon après-midi.',evening:'Bonsoir.',night:'Bonne nuit.'},weather:{clear:'Dégagé',mostlyClear:'Plutôt dégagé',partlyCloudy:'Peu nuageux',overcast:'Couvert',fog:'Brouillard',drizzle:'Bruine',rain:'Pluie',snow:'Neige',thunder:'Orages',day:'Jour',night:'Nuit'},ssTitle:'Écran de veille',ssIdleLbl:'Activation automatique après',ssPreviewBtn:'Aperçu de l\'écran de veille',hadithDay:'Hadith du jour',byCity:'Heure locale de',inTime:'Dans',ssBgLbl:'Fond de la veille',ssBgSame:'Comme l\'accueil',ssDailyLbl:'Contenu du jour',dailyBoth:'Verset + Hadith',dailyAyah:'Verset seulement',dailyHadith:'Hadith seulement',dailyTitleAyah:'Verset du jour',dailyTitleHadith:'Hadith du jour',dailyTitleBoth:'Verset & Hadith du jour',lastUpdated:'Mis à jour à {t}',hijriOffsetLbl:'Décalage du calendrier hégirien',ssNightDimLbl:'Assombrissement nocturne',occTitle:'Occasions islamiques',occasions:{ramadan:'Ramadan',qadr:'Laylat al-Qadr',fitr:'Aïd el-Fitr',arafah:'Arafat',adha:'Aïd al-Adha',newyear:'Nouvel an hégirien',ashura:'Achoura',mawlid:'Mawlid',isra:'Isra & Miraj'},occTodayPrefix:'Aujourd\u2019hui :',occGreeting:'Bonne occasion à tous',occThen:'Puis',occRamadanDay:'Jour {n} du Ramadan',minute:'min'},
+  en:{home:'Home',allApps:'All Apps',settings:'Launcher Settings',dockTitle:'Favorites Dock',dockCountLbl:'Apps on dock',dockMgmtLbl:'Manage & organize',cardsTitle:'Displayed cards',cardPrayerLbl:'Prayer times card',cardWeatherLbl:'Weather card',locTitle:'Location',searchPlaceholder:'Search any city (Agadir, London...)',searchBtn:'Search',searching:'Searching...',noResults:'No matching cities',methodTitle:'Prayer method',methodAwqaf:'Awqaf (Morocco)',methodUmmAlQura:'Umm Al-Qura (Makkah)',prefsTitle:'Preferences',langLbl:'Language',tempLbl:'Temperature',clockLbl:'Clock',clockOffsetLbl:'Clock offset',wallTitle:'Wallpapers',galleryBtn:'Choose from gallery',devTitle:'Made by Ossamah',devQrHint:'Scan the QR with your phone camera',devQrClose:'Close',wifi:'Wi-Fi',ethernet:'Ethernet',offline:'Offline',nextPrayerBadge:'Next prayer',nextPrayerChip:'Next',adhan:'Adhan',now:'Now',prayers:{Fajr:'Fajr',Sunrise:'Sunrise',Dhuhr:'Dhuhr',Asr:'Asr',Maghrib:'Maghrib',Isha:'Isha'},feels:'Feels like',humidity:'Humidity',wind:'Wind',speedUnit:'km/h',high:'High',low:'Low',sunrise:'Sunrise',sunset:'Sunset',greetings:{morning:'Good morning.',afternoon:'Good afternoon.',evening:'Good evening.',night:'Good night.'},weather:{clear:'Clear',mostlyClear:'Mostly clear',partlyCloudy:'Partly cloudy',overcast:'Overcast',fog:'Foggy',drizzle:'Drizzle',rain:'Rain',snow:'Snow',thunder:'Thunderstorms',day:'Day',night:'Night'},ssTitle:'Idle screensaver',ssIdleLbl:'Auto-activate after idle',ssPreviewBtn:'Preview screensaver',hadithDay:'Hadith of the day',byCity:'Local time in',inTime:'In',ssBgLbl:'Screensaver background',ssBgSame:'Same as home',ssDailyLbl:'Daily content',dailyBoth:'Ayah + Hadith',dailyAyah:'Ayah only',dailyHadith:'Hadith only',dailyTitleAyah:'Ayah of the day',dailyTitleHadith:'Hadith of the day',dailyTitleBoth:'Ayah & Hadith of the day',lastUpdated:'Last updated {t}',hijriOffsetLbl:'Hijri date offset',ssNightDimLbl:'Night dimming',occTitle:'Islamic occasions',occasions:{ramadan:'Ramadan',qadr:'Laylat al-Qadr',fitr:'Eid al-Fitr',arafah:'Arafah',adha:'Eid al-Adha',newyear:'Hijri New Year',ashura:'Ashura',mawlid:'Mawlid',isra:'Isra & Miraj'},occTodayPrefix:'Today:',occGreeting:'A blessed occasion to all',occThen:'Then',occRamadanDay:'Day {n} of Ramadan',minute:'min'}
 };
 
 const BUILTIN_WALLPAPERS = [
@@ -1372,10 +1399,21 @@ function renderSettingsUI(){
 function setScreensaverDelay(n){ STATE.screensaverDelay=n; saveState(); renderSettingsUI(); resetIdleTimer(); }
 function ssBgInterval(){ const v=STATE.ssBgInterval; return (v===undefined||v===null)?0:(+v||0); }
 const DEV_URL='https://oussamachu.framer.website/';
-function openDevLink(){
-  try{ if(window.AndroidTV&&typeof window.AndroidTV.openUrl==='function'){ window.AndroidTV.openUrl(DEV_URL); return; } }catch(e){}
-  try{ window.open(DEV_URL,'_blank','noopener'); }catch(e){}
+/* بطاقة "صنع بواسطة أسامة": تفتح نافذة QR أنيقة للتصوير بكاميرا الهاتف بدل فتح الرابط في المتصفح */
+function openDevLink(){ showQr(); }
+function showQr(){
+  const o=document.getElementById('qr-overlay');
+  o.classList.add('open'); o.setAttribute('aria-hidden','false');
+  resetIdleTimer();
+  const btn=document.getElementById('qr-close'); if(btn) dpadSetFocus(btn);
+  try{ btn.focus(); }catch(e){}
 }
+function hideQr(){
+  const o=document.getElementById('qr-overlay');
+  o.classList.remove('open'); o.setAttribute('aria-hidden','true');
+  const dev=document.getElementById('dev-card'); if(dev) dpadSetFocus(dev);
+}
+document.addEventListener('pointerdown',e=>{ const o=document.getElementById('qr-overlay'); if(o&&o.classList.contains('open')&&e.target===o) hideQr(); });
 function setSsBgInterval(n){ STATE.ssBgInterval=n; saveState(); renderSettingsUI(); }
 function setSsDailyMode(m){ STATE.ssDailyMode=(m==='ayah'||m==='hadith')?m:'both'; saveState(); renderSettingsUI(); }
 function setHijriOffset(o){ STATE.hijriOffset=Math.max(-2,Math.min(2,parseInt(o,10)||0)); saveState(); ssOccCache=null; renderSettingsUI(); }
@@ -1855,7 +1893,8 @@ function isOkKey(e){
 let dpadPressTimer=null, dpadPressLong=false, dpadLongPressTarget=null;
 document.addEventListener('keydown',e=>{
   const k=e.key, act=document.activeElement, typing=act&&act.tagName==='INPUT';
-  const sm=document.getElementById('settings-modal'), dr=document.getElementById('all-apps-drawer');
+  const sm=document.getElementById('settings-modal'), dr=document.getElementById('all-apps-drawer'), qro=document.getElementById('qr-overlay');
+  if(qro&&qro.classList.contains('open')){ e.preventDefault(); hideQr(); return; }
   if(k==='Escape'||k==='GoBack'||(k==='Backspace'&&!typing)){
     if(sm.classList.contains('open')){ e.preventDefault(); closeSettings(); }
     else if(dr.classList.contains('open')){ e.preventDefault(); closeAllAppsDrawer(); }
