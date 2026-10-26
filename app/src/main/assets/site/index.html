@@ -134,10 +134,12 @@ i[data-ic]{display:inline-flex;align-items:center;justify-content:center;font-st
   padding:34px 64px 38px;display:flex;flex-direction:column;gap:22px}
 
 /* ─── FOCUS ─────────────────────────────────────────────────── */
-/* Focus: cheap transform-only transition — no background/box-shadow repaints.
-   The ring is drawn with outline+thin shadow instead of blurred glows. */
-.dpad-focusable{outline:none;position:relative;cursor:pointer;transition:transform 0.12s ease-out}
-.dpad-focusable.dpad-active{outline:3px solid #fff;box-shadow:0 0 0 6px rgba(125,180,255,.5)!important;transform:scale(1.04);z-index:8}
+/* Focus ring drawn with ZERO-BLUR box-shadow rings: box-shadow follows
+   border-radius 100% (circles stay circles), while this WebView engine
+   ignores border-radius on outline — producing ugly square frames. */
+*, *:focus, *:focus-visible { outline: none !important; -webkit-tap-highlight-color: transparent; }
+.dpad-focusable{outline:none !important;position:relative;cursor:pointer;transition:transform 0.12s ease-out}
+.dpad-focusable.dpad-active{outline:none !important;box-shadow:0 0 0 3px #fff, 0 0 0 7px rgba(125,180,255,.55) !important;transform:scale(1.04);z-index:8}
 
 /* ─── CARD ──────────────────────────────────────────────────── */
 .card{background:rgba(15, 23, 42, 0.88);
@@ -218,8 +220,8 @@ i[data-ic]{display:inline-flex;align-items:center;justify-content:center;font-st
 .tile{border-radius:26px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;
   background:var(--tbg,#222);color:var(--tfg,#fff);border:1px solid rgba(255,255,255,.14);box-shadow:0 4px 12px rgba(0,0,0,.25);
   transition:transform 0.12s ease-out,border-color 0.12s ease-out}
-.tile.dpad-focusable.dpad-active{transform:scale(1.08);border-color:var(--accent);
-  outline:3px solid #fff;box-shadow:0 0 0 6px rgba(125,180,255,.5)!important;z-index:8}
+.tile.dpad-focusable.dpad-active{outline:none !important;transform:scale(1.08);border-color:var(--accent);
+  box-shadow:0 0 0 3px #fff, 0 0 0 7px rgba(125,180,255,.55) !important;z-index:8}
 .tile::before{content:'';position:absolute;inset:0;background:linear-gradient(160deg,rgba(255,255,255,.16),transparent 55%)}
 .tile .mark{position:relative;display:flex;align-items:center;justify-content:center;width:96px;height:96px}
 .tile .mark svg{width:auto;height:80px}
