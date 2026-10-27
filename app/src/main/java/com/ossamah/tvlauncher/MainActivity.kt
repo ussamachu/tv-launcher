@@ -31,6 +31,9 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var webView: WebView
 
+    /** Single bridge instance — kept referenced so onResume() can invalidate its app cache. */
+    private lateinit var bridge: AndroidTVBridge
+
     /** Native wallpaper picker (ACTION_GET_CONTENT -> Base64 -> WebView). */
     // Kotlin bridge (AndroidTVBridge) needs access to this launcher.
     val wallpaperPicker = registerForActivityResult(
@@ -102,7 +105,7 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        webView.addJavascriptInterface(AndroidTVBridge(this), "AndroidTV")
+        webView.addJavascriptInterface(AndroidTVBridge(this).also { bridge = it }, "AndroidTV")
     }
 
     // ------------------------------------------------------------ Fullscreen
@@ -122,6 +125,22 @@ class MainActivity : ComponentActivity() {
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if (hasFocus) hideSystemBars()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // الرجوع من حوار إزالة تطبيق (أو أي تطبيق خارجي): نسقط كاش قائمة التطبيقات
+        // ونحدّث شريط الويب فوراً حتى تختفي أيقونة التطبيق المحذوف على الفور.
+        runCatching { bridge.onHostResume() }
+    }
+
+    /** نقطة عامة للجسر: webView خاص، فدوال الجسر تستدعي الويب عبر هذه الطريقة فقط. */
+    fun refreshAppsFromWebView() {
+        runCatching {
+            webView.evaluateJavascript(
+                "if(window.syncInstalledApps){syncInstalledApps();renderDock();}", null
+            )
+        }
     }
 
     // ------------------------------------------------------------- Back key
@@ -176,6 +195,14 @@ class AndroidTVBridge(private val activity: MainActivity) {
 
     /** Session cache of the serialized app list so icons are encoded only once. */
     private var cachedAppsJson: String? = null
+
+    /** Called from MainActivity.onResume(): drops the cached app list and refreshes the web dock. */
+    fun onHostResume() {
+        cachedAppsJson = null
+        activity.runOnUiThread {
+            runCatching { activity.refreshAppsFromWebView() }
+        }
+    }
 
     /** Launches an installed TV app by package name (leanback first, then phone starter). */
     @android.webkit.JavascriptInterface
@@ -299,6 +326,23 @@ class AndroidTVBridge(private val activity: MainActivity) {
         activity.runOnUiThread {
             runCatching {
                 activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+            }
+        }
+    }
+
+    /** Uninstalls an app from the TV box via the system uninstall dialog. */
+    @android.webkit.JavascriptInterface
+    fun uninstallApp(pkg: String?) {
+        if (pkg.isNullOrBlank()) return
+        activity.runOnUiThread {
+            try {
+                val intent = Intent(Intent.ACTION_DELETE).apply {
+                    data = Uri.parse("package:$pkg")
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+                activity.startActivity(intent)
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
