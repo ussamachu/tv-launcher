@@ -259,45 +259,60 @@ i[data-ic]{display:inline-flex;align-items:center;justify-content:center;font-st
   border:1px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;color:#fff;z-index:3}
 .star.fav{color:var(--gold);background:rgba(0,0,0,.55)}
 
-/* settings */
-.settings-panel{position:absolute;left:204px;top:90px;width:1512px;height:900px;
-  background:linear-gradient(165deg,rgba(21,29,43,.985),rgba(9,14,22,.975));
-  border:1px solid rgba(255,255,255,.12);border-radius:40px;display:flex;flex-direction:column;overflow:hidden;
-  box-shadow:0 4px 12px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.10)}
-.sp-head{display:flex;align-items:center;justify-content:space-between;padding:24px 36px;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0;
+/* settings — صفحة كاملة 1920×1080 (Zero-Lag: بلا blur ولا backdrop-filter) */
+#settings-modal{inset:0;background:linear-gradient(165deg,#0d1524 0%,#060a12 100%)}
+.settings-panel{position:absolute;left:0;top:0;inset:0;width:1920px;height:1080px;
+  background:linear-gradient(165deg,#0d1524 0%,#060a12 100%);
+  border:none;border-radius:0;display:flex;flex-direction:column;overflow:hidden}
+.sp-head{display:flex;align-items:center;justify-content:space-between;padding:26px 64px;
+  border-bottom:1px solid rgba(255,255,255,.09);flex-shrink:0;
   background:linear-gradient(180deg,rgba(255,255,255,.05),transparent)}
-.sp-title{display:flex;align-items:center;gap:14px;font-size:36px;font-weight:800}
-.sp-body{flex:1;display:grid;grid-template-columns:1fr 1fr;min-height:0;overflow:hidden}
-.sp-col{padding:18px 30px 20px;display:flex;flex-direction:column;gap:16px;min-height:0;overflow-y:auto;
+.sp-title{display:flex;align-items:center;gap:16px;font-size:42px;font-weight:800}
+.sp-back{display:flex;align-items:center;gap:12px;height:62px;padding:0 30px;border-radius:31px;
+  background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.20);color:#fff;
+  font-size:23px;font-weight:700;transition:background .15s,color .15s,border-color .15s}
+.sp-back.dpad-active{background:var(--accent);border-color:transparent;color:#07111f}
+.sp-body{flex:1;display:grid;grid-template-columns:1fr 1fr;min-height:0;overflow:hidden;
+  gap:40px;padding:22px 64px 28px}
+.sp-col{padding:0;display:flex;flex-direction:column;gap:16px;min-height:0;overflow-y:auto;
   scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.22) transparent}
-.sp-col:first-child{border-inline-end:1px solid rgba(255,255,255,.07)}
-.sp-col::-webkit-scrollbar{width:8px}
+.sp-col::-webkit-scrollbar{width:10px}
 .sp-col::-webkit-scrollbar-track{background:transparent}
-.sp-col::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);border-radius:8px}
+.sp-col::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);border-radius:10px}
 .sp-sec{display:flex;flex-direction:column;gap:8px;min-height:0;flex-shrink:0}
-.sp-sec h3{font-size:20px;font-weight:700;color:var(--ink3);letter-spacing:.2px;margin:0;display:flex;align-items:center;gap:10px}
-.sp-sec h3::before{content:'';width:5px;height:17px;border-radius:3px;background:var(--accent);opacity:.9;flex-shrink:0}
+.sp-sec h3{font-size:21px;font-weight:700;color:var(--ink3);letter-spacing:.2px;margin:0;display:flex;align-items:center;gap:10px}
+.sp-sec h3::before{content:'';width:5px;height:18px;border-radius:3px;background:var(--accent);opacity:.9;flex-shrink:0}
 .sp-card{background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.085);border-radius:22px;padding:4px 8px;display:flex;flex-direction:column;min-height:0}
-.srow{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;padding:9px 8px;font-size:23px;font-weight:500;border-radius:14px}
+.srow{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:7px 10px;font-size:22px;font-weight:500;border-radius:14px}
 .srow + .srow{box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
 .srow.dpad-focusable:hover{background:rgba(255,255,255,.04)}
 .opts{display:flex;flex-wrap:wrap;gap:8px}
-.chip{height:46px;padding:0 20px;border-radius:14px;font-size:20px;font-weight:600;display:flex;align-items:center;
+.chip{height:46px;padding:0 20px;border-radius:15px;font-size:20px;font-weight:600;display:flex;align-items:center;
   background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.10);color:var(--ink2);transition:background .15s,color .15s,border-color .15s}
 .chip.sel{background:var(--accent);border-color:var(--accent);color:#07111f}
+/* Radio — دائرة اختيار واضحة لكل خيار حصري */
+.chip::before{content:'';width:18px;height:18px;border-radius:50%;flex-shrink:0;box-sizing:border-box;
+  border:2px solid rgba(255,255,255,.45);margin-inline-end:10px;
+  display:flex;align-items:center;justify-content:center;
+  transition:border-color .15s,background .15s}
+.chip.sel::before{border-color:#07111f;background:radial-gradient(circle,#07111f 45%,transparent 50%)}
+/* Checkbox — مربع اختيار لخيارات المناسبات المتعددة */
+.chip-check::before{border-radius:5px}
+.chip-check.sel::before{content:'✓';border-color:#07111f;background:#07111f;color:var(--accent);
+  font-size:13px;font-weight:900;line-height:1;text-align:center}
 .inp{flex:1;min-width:0;height:50px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);border-radius:16px;padding:0 18px;color:#fff;font-family:inherit;font-size:21px;outline:none}
-.btn{height:50px;padding:0 24px;border-radius:16px;background:var(--accent);color:#07111f;border:none;font-family:inherit;font-size:20px;font-weight:700;display:flex;align-items:center;gap:9px}
-.btn.ghost{background:rgba(255,255,255,.05);color:#fff;border:1px dashed rgba(255,255,255,.18);width:100%;justify-content:center;height:46px;font-size:19px}
-.srow.search{background:none;border:none;padding:4px;flex-wrap:nowrap;box-shadow:none}
+.btn{height:50px;padding:0 24px;border-radius:16px;background:var(--accent);color:#07111f;border:none;font-family:inherit;font-size:19px;font-weight:700;display:flex;align-items:center;gap:9px}
+.btn.ghost{background:rgba(255,255,255,.05);color:#fff;border:1px dashed rgba(255,255,255,.18);width:100%;justify-content:center;height:44px;font-size:18px}
+.srow.search{background:none;border:none;padding:6px;flex-wrap:nowrap;box-shadow:none}
 .sp-card .city-results{padding:4px 4px 2px}
 .sp-card > .opts{padding:2px 4px 6px}
-.sp-card.walls{padding:12px;gap:12px}
+.sp-card.walls{padding:10px 12px;gap:9px}
 .city-results{display:flex;flex-direction:column;gap:8px}
-.cres{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);font-size:21px}
+.cres{display:flex;justify-content:space-between;align-items:center;padding:11px 18px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);font-size:20px}
 .cres small{font-size:17px;color:var(--ink3)}
 .cres-msg{font-size:19px;color:var(--ink3);padding:4px 6px}
 .wp-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
-.wp{height:68px;border-radius:14px;background-size:cover;background-position:center;border:2px solid rgba(255,255,255,.14)}
+.wp{height:66px;border-radius:14px;background-size:cover;background-position:center;border:2px solid rgba(255,255,255,.14)}
 .wp.active{border-color:var(--accent);box-shadow:0 0 20px rgba(125,180,255,.55)}
 
 /* ─── MATCHES MODAL: مباريات اليوم (خفيفة الصفر — بلا backdrop-filter) ─── */
@@ -352,11 +367,13 @@ i[data-ic]{display:inline-flex;align-items:center;justify-content:center;font-st
 .ctx-btn.dpad-active{background:var(--accent);border-color:transparent;transform:scale(1.03)}
 .ctx-btn.danger.dpad-active{background:#ad3830}
 
-.tg{width:64px;height:36px;border-radius:20px;background:rgba(255,255,255,.18);position:relative;transition:background .2s;flex-shrink:0}
-.tg::after{content:'';position:absolute;top:4px;inset-inline-start:4px;width:28px;height:28px;border-radius:50%;background:#fff;transition:transform .2s}
-.tg.on{background:var(--accent)}
-.tg.on::after{transform:translateX(28px)}
-[dir="rtl"] .tg.on::after{transform:translateX(-28px)}
+/* Switch — مفتاح ثنائي كبير وواضح على التلفاز */
+.tg{width:72px;height:40px;border-radius:22px;background:rgba(255,255,255,.18);position:relative;transition:background .2s;flex-shrink:0}
+.tg::after{content:'';position:absolute;top:4px;inset-inline-start:4px;width:32px;height:32px;border-radius:50%;background:#fff;
+  box-shadow:0 2px 6px rgba(0,0,0,.35);transition:transform .2s}
+.tg.on{background:#22c55e;box-shadow:0 0 16px rgba(34,197,94,.55)}
+.tg.on::after{transform:translateX(32px)}
+[dir="rtl"] .tg.on::after{transform:translateX(-32px)}
 .dev{padding:14px 18px;border-radius:20px;display:flex;align-items:center;gap:14px;margin-top:auto;flex-shrink:0;
   background:linear-gradient(135deg,rgba(125,180,255,.14),rgba(255,198,92,.08));border:1px solid rgba(255,255,255,.09)}
 .dev .badge{width:46px;height:46px;border-radius:50%;background:var(--accent);color:#07111f;display:flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -558,8 +575,8 @@ i[data-ic]{display:inline-flex;align-items:center;justify-content:center;font-st
   <div class="overlay" id="settings-modal">
     <div class="settings-panel">
       <div class="sp-head">
-        <div class="sp-title"><i data-ic="sliders" data-s="38" style="color:var(--accent)"></i><span data-i18n="settings"></span></div>
-        <div class="ibtn dpad-focusable" id="s-close" tabindex="0" onclick="closeSettings()"><i data-ic="x" data-s="26"></i></div>
+        <div class="sp-title"><i data-ic="sliders" data-s="44" style="color:var(--accent)"></i><span data-i18n="settings"></span></div>
+        <div class="sp-back dpad-focusable" id="s-close" tabindex="0" onclick="closeSettings()"><i data-ic="x" data-s="30"></i><span data-i18n="backLbl"></span></div>
       </div>
       <div class="sp-body">
         <!-- COLUMN A -->
@@ -612,6 +629,44 @@ i[data-ic]{display:inline-flex;align-items:center;justify-content:center;font-st
           </section>
 
           <section class="sp-sec">
+            <h3 data-i18n="wallTitle"></h3>
+            <div class="sp-card walls">
+              <div class="wp-strip" id="wallpapers-strip"></div>
+              <button class="btn ghost dpad-focusable" tabindex="0" onclick="pickWallpaper()"><i data-ic="image" data-s="26"></i><span data-i18n="galleryBtn"></span></button>
+            </div>
+            <input type="file" id="wallpaper-file-input" accept="image/*" style="display:none" onchange="handleWallpaperFile(event)" />
+          </section>
+          <div class="dev dpad-focusable" id="dev-card" tabindex="0" onclick="openDevLink()">
+            <div class="badge"><i data-ic="info" data-s="28"></i></div>
+            <div class="t1" data-i18n="devTitle"></div>
+          </div>
+
+        </div>
+
+        <!-- COLUMN B -->
+        <div class="sp-col">
+          <section class="sp-sec">
+            <h3 data-i18n="dockTitle"></h3>
+            <div class="sp-card">
+              <div class="srow"><span data-i18n="dockCountLbl"></span>
+                <div class="opts" id="dock-count-chips">
+                  <div class="chip dpad-focusable" tabindex="0" onclick="setDockMax(5)">5</div>
+                  <div class="chip dpad-focusable" tabindex="0" onclick="setDockMax(6)">6</div>
+                  <div class="chip dpad-focusable" tabindex="0" onclick="setDockMax(7)">7</div>
+                  <div class="chip dpad-focusable" tabindex="0" onclick="setDockMax(8)">8</div>
+                </div></div>
+            </div>
+          </section>
+
+          <section class="sp-sec">
+            <h3 data-i18n="cardsTitle"></h3>
+            <div class="sp-card">
+              <div class="srow dpad-focusable" tabindex="0" onclick="toggleCard('prayer')"><span data-i18n="cardPrayerLbl"></span><div class="tg" id="sw-prayer"></div></div>
+              <div class="srow dpad-focusable" tabindex="0" onclick="toggleCard('weather')"><span data-i18n="cardWeatherLbl"></span><div class="tg" id="sw-weather"></div></div>
+            </div>
+          </section>
+
+          <section class="sp-sec">
             <h3 data-i18n="ssTitle"></h3>
             <div class="sp-card">
               <div class="srow"><span data-i18n="ssIdleLbl"></span>
@@ -644,56 +699,19 @@ i[data-ic]{display:inline-flex;align-items:center;justify-content:center;font-st
               <div class="srow dpad-focusable" tabindex="0" onclick="setSsNightDim()"><span data-i18n="ssNightDimLbl"></span><div class="tg" id="sw-ssdim"></div></div>
               <div class="srow"><span data-i18n="occTitle"></span>
                 <div class="opts">
-                  <div class="chip dpad-focusable" id="occ-ramadan" tabindex="0" onclick="setOccToggle('ramadan')"></div>
-                  <div class="chip dpad-focusable" id="occ-qadr" tabindex="0" onclick="setOccToggle('qadr')"></div>
-                  <div class="chip dpad-focusable" id="occ-fitr" tabindex="0" onclick="setOccToggle('fitr')"></div>
-                  <div class="chip dpad-focusable" id="occ-arafah" tabindex="0" onclick="setOccToggle('arafah')"></div>
-                  <div class="chip dpad-focusable" id="occ-adha" tabindex="0" onclick="setOccToggle('adha')"></div>
-                  <div class="chip dpad-focusable" id="occ-newyear" tabindex="0" onclick="setOccToggle('newyear')"></div>
-                  <div class="chip dpad-focusable" id="occ-ashura" tabindex="0" onclick="setOccToggle('ashura')"></div>
-                  <div class="chip dpad-focusable" id="occ-mawlid" tabindex="0" onclick="setOccToggle('mawlid')"></div>
-                  <div class="chip dpad-focusable" id="occ-isra" tabindex="0" onclick="setOccToggle('isra')"></div>
+                  <div class="chip chip-check dpad-focusable" id="occ-ramadan" tabindex="0" onclick="setOccToggle('ramadan')"></div>
+                  <div class="chip chip-check dpad-focusable" id="occ-qadr" tabindex="0" onclick="setOccToggle('qadr')"></div>
+                  <div class="chip chip-check dpad-focusable" id="occ-fitr" tabindex="0" onclick="setOccToggle('fitr')"></div>
+                  <div class="chip chip-check dpad-focusable" id="occ-arafah" tabindex="0" onclick="setOccToggle('arafah')"></div>
+                  <div class="chip chip-check dpad-focusable" id="occ-adha" tabindex="0" onclick="setOccToggle('adha')"></div>
+                  <div class="chip chip-check dpad-focusable" id="occ-newyear" tabindex="0" onclick="setOccToggle('newyear')"></div>
+                  <div class="chip chip-check dpad-focusable" id="occ-ashura" tabindex="0" onclick="setOccToggle('ashura')"></div>
+                  <div class="chip chip-check dpad-focusable" id="occ-mawlid" tabindex="0" onclick="setOccToggle('mawlid')"></div>
+                  <div class="chip chip-check dpad-focusable" id="occ-isra" tabindex="0" onclick="setOccToggle('isra')"></div>
                 </div></div>
             </div>
           </section>
 
-          <section class="sp-sec">
-            <h3 data-i18n="wallTitle"></h3>
-            <div class="sp-card walls">
-              <div class="wp-strip" id="wallpapers-strip"></div>
-              <button class="btn ghost dpad-focusable" tabindex="0" onclick="pickWallpaper()"><i data-ic="image" data-s="26"></i><span data-i18n="galleryBtn"></span></button>
-            </div>
-            <input type="file" id="wallpaper-file-input" accept="image/*" style="display:none" onchange="handleWallpaperFile(event)" />
-          </section>
-        </div>
-
-        <!-- COLUMN B -->
-        <div class="sp-col">
-          <section class="sp-sec">
-            <h3 data-i18n="dockTitle"></h3>
-            <div class="sp-card">
-              <div class="srow"><span data-i18n="dockCountLbl"></span>
-                <div class="opts" id="dock-count-chips">
-                  <div class="chip dpad-focusable" tabindex="0" onclick="setDockMax(5)">5</div>
-                  <div class="chip dpad-focusable" tabindex="0" onclick="setDockMax(6)">6</div>
-                  <div class="chip dpad-focusable" tabindex="0" onclick="setDockMax(7)">7</div>
-                  <div class="chip dpad-focusable" tabindex="0" onclick="setDockMax(8)">8</div>
-                </div></div>
-            </div>
-          </section>
-
-          <section class="sp-sec">
-            <h3 data-i18n="cardsTitle"></h3>
-            <div class="sp-card">
-              <div class="srow dpad-focusable" tabindex="0" onclick="toggleCard('prayer')"><span data-i18n="cardPrayerLbl"></span><div class="tg" id="sw-prayer"></div></div>
-              <div class="srow dpad-focusable" tabindex="0" onclick="toggleCard('weather')"><span data-i18n="cardWeatherLbl"></span><div class="tg" id="sw-weather"></div></div>
-            </div>
-          </section>
-
-          <div class="dev dpad-focusable" id="dev-card" tabindex="0" onclick="openDevLink()">
-            <div class="badge"><i data-ic="info" data-s="28"></i></div>
-            <div class="t1" data-i18n="devTitle"></div>
-          </div>
         </div>
       </div>
     </div>
@@ -929,9 +947,9 @@ function syncInstalledApps(){
 
 /* ═══ 4. I18N ═══ */
 const I18N = {
-  ar:{home:'الرئيسية',allApps:'كل التطبيقات',settings:'الإعدادات',dockTitle:'شريط التطبيقات المفضلة',dockCountLbl:'عدد التطبيقات في الشريط',cardsTitle:'البطاقات المعروضة',cardPrayerLbl:'بطاقة مواقيت الصلاة',cardWeatherLbl:'بطاقة الطقس',locTitle:'الموقع والمدينة',searchPlaceholder:'ابحث عن أي مدينة (أكادير، طنجة، باريس...)',searchBtn:'بحث',searching:'جاري البحث...',noResults:'لا توجد نتائج مطابقة',methodTitle:'حساب الصلاة',methodAwqaf:'وزارة الأوقاف (المغرب)',methodUmmAlQura:'أم القرى (مكة)',prefsTitle:'التفضيلات',langLbl:'اللغة',tempLbl:'الحرارة',clockLbl:'الساعة',clockOffsetLbl:'تصحيح الساعة',wallTitle:'الخلفيات',galleryBtn:'اختيار خلفية من المعرض',devTitle:'صنع بواسطة أسامة',devQrHint:'امسح الرمز بكاميرا هاتفك',devQrClose:'إغلاق',wifi:'واي فاي',ethernet:'إيثرنت',offline:'غير متصل',netWeak:'ضعيف',matchesTitle:'مباريات اليوم',ctxOpen:'فتح التطبيق',ctxAddFav:'⭐ إضافة إلى المفضلة',ctxRemoveFav:'⭐ إزالة من المفضلة',ctxUninstall:'🗑️ حذف التطبيق من الجهاز',ctxMoveRight:'➡️ تحريك لليمين',ctxMoveLeft:'⬅️ تحريك لليسار',ctxToTop:'⏫ نقل إلى الأول',mLive:'مباشر',mFt:'انتهت',mRefresh:'تحديث',mClose:'إغلاق',mEmpty:'لا توجد مباريات اليوم',mLoading:'جاري جلب المباريات...',nextPrayerBadge:'الصلاة القادمة',nextPrayerChip:'القادمة',adhan:'الأذان',now:'الآن',prayers:{Fajr:'الفجر',Sunrise:'الشروق',Dhuhr:'الظهر',Asr:'العصر',Maghrib:'المغرب',Isha:'العشاء'},feels:'المحسوسة',humidity:'الرطوبة',wind:'الرياح',speedUnit:'كم/س',high:'العظمى',low:'الصغرى',sunrise:'الشروق',sunset:'الغروب',greetings:{morning:'صباح الخير.',afternoon:'نهارك سعيد.',evening:'مساء الخير.',night:'ليلة طيبة.'},weather:{clear:'صافٍ',mostlyClear:'صافٍ غالباً',partlyCloudy:'غائم جزئياً',overcast:'غائم',fog:'ضباب',drizzle:'رذاذ',rain:'مطر',snow:'ثلوج',thunder:'عاصفة رعدية',day:'نهاراً',night:'ليلاً'},ssTitle:'شاشة التوقف',ssIdleLbl:'التفعيل التلقائي بعد الدخول',ssPreviewBtn:'معاينة شاشة التوقف',hadithDay:'حديث اليوم',byCity:'بتوقيت',inTime:'بعد',ssBgLbl:'خلفية شاشة التوقف',ssBgSame:'نفس الرئيسية',ssDailyLbl:'المحتوى اليومي',dailyBoth:'آية + حديث',dailyAyah:'آية فقط',dailyHadith:'حديث فقط',dailyTitleAyah:'آية اليوم',dailyTitleHadith:'حديث اليوم',dailyTitleBoth:'آية وحديث اليوم',lastUpdated:'آخر تحديث الساعة {t}',hijriOffsetLbl:'تعديل التاريخ الهجري',ssNightDimLbl:'خفض الإضاءة ليلاً',occTitle:'المناسبات الإسلامية',occasions:{ramadan:'رمضان',qadr:'ليلة القدر',fitr:'عيد الفطر',arafah:'يوم عرفة',adha:'عيد الأضحى',newyear:'رأس السنة الهجرية',ashura:'يوم عاشوراء',mawlid:'المولد النبوي الشريف',isra:'ليلة الإسراء والمعراج'},occDayOf:{ramadan:'اليوم بداية شهر رمضان',qadr:'اليوم ليلة القدر المباركة',fitr:'اليوم عيد الفطر المبارك',arafah:'اليوم يوم عرفة',adha:'اليوم عيد الأضحى المبارك',newyear:'اليوم رأس السنة الهجرية',ashura:'اليوم يوم عاشوراء',mawlid:'اليوم المولد النبوي الشريف',isra:'اليوم ذكرى الإسراء والمعراج'},occTodayPrefix:'اليوم',occGreeting:'كل عام وأنتم بخير',occThen:'ثم',occRamadanDay:'اليوم {n} من رمضان',minute:'دقيقة'},
-  fr:{home:'Accueil',allApps:'Toutes les apps',settings:'Paramètres du Launcher',dockTitle:'Dock des favoris',dockCountLbl:"Nombre d'applications",cardsTitle:'Cartes affichées',cardPrayerLbl:'Carte des prières',cardWeatherLbl:'Carte météo',locTitle:'Localisation',searchPlaceholder:'Rechercher une ville (Paris, Rabat...)',searchBtn:'Rechercher',searching:'Recherche...',noResults:'Aucun résultat',methodTitle:'Calcul des prières',methodAwqaf:'Habous (Maroc)',methodUmmAlQura:'Oumm Al-Qura (La Mecque)',prefsTitle:'Préférences',langLbl:'Langue',tempLbl:'Température',clockLbl:'Horloge',clockOffsetLbl:'Décalage horaire',wallTitle:'Fonds d’écran',galleryBtn:'Choisir depuis la galerie',devTitle:'Créé par Ossamah',devQrHint:'Scannez le QR avec votre téléphone',devQrClose:'Fermer',wifi:'Wi-Fi',ethernet:'Ethernet',offline:'Hors ligne',netWeak:'Faible',matchesTitle:'Matchs du jour',ctxOpen:'Ouvrir l’application',ctxAddFav:'⭐ Ajouter aux favoris',ctxRemoveFav:'⭐ Retirer des favoris',ctxUninstall:'🗑️ Désinstaller du device',ctxMoveRight:'➡️ Déplacer à droite',ctxMoveLeft:'⬅️ Déplacer à gauche',ctxToTop:'⏫ Mettre en premier',mLive:'DIRECT',mFt:'Terminé',mRefresh:'Actualiser',mClose:'Fermer',mEmpty:'Aucun match aujourd’hui',mLoading:'Chargement des matchs...',nextPrayerBadge:'Prochaine prière',nextPrayerChip:'Suivante',adhan:'Adhan',now:'Now',prayers:{Fajr:'Fajr',Sunrise:'Lever',Dhuhr:'Dhuhr',Asr:'Asr',Maghrib:'Maghrib',Isha:'Isha'},feels:'Ressentie',humidity:'Humidité',wind:'Vent',speedUnit:'km/h',high:'Max',low:'Min',sunrise:'Lever',sunset:'Coucher',greetings:{morning:'Bonjour.',afternoon:'Bon après-midi.',evening:'Bonsoir.',night:'Bonne nuit.'},weather:{clear:'Dégagé',mostlyClear:'Plutôt dégagé',partlyCloudy:'Peu nuageux',overcast:'Couvert',fog:'Brouillard',drizzle:'Bruine',rain:'Pluie',snow:'Neige',thunder:'Orages',day:'Jour',night:'Nuit'},ssTitle:'Écran de veille',ssIdleLbl:'Activation automatique après',ssPreviewBtn:'Aperçu de l\'écran de veille',hadithDay:'Hadith du jour',byCity:'Heure locale de',inTime:'Dans',ssBgLbl:'Fond de la veille',ssBgSame:'Comme l\'accueil',ssDailyLbl:'Contenu du jour',dailyBoth:'Verset + Hadith',dailyAyah:'Verset seulement',dailyHadith:'Hadith seulement',dailyTitleAyah:'Verset du jour',dailyTitleHadith:'Hadith du jour',dailyTitleBoth:'Verset & Hadith du jour',lastUpdated:'Mis à jour à {t}',hijriOffsetLbl:'Décalage du calendrier hégirien',ssNightDimLbl:'Assombrissement nocturne',occTitle:'Occasions islamiques',occasions:{ramadan:'Ramadan',qadr:'Laylat al-Qadr',fitr:'Aïd el-Fitr',arafah:'Arafat',adha:'Aïd al-Adha',newyear:'Nouvel an hégirien',ashura:'Achoura',mawlid:'Mawlid',isra:'Isra & Miraj'},occTodayPrefix:'Aujourd\u2019hui :',occGreeting:'Bonne occasion à tous',occThen:'Puis',occRamadanDay:'Jour {n} du Ramadan',minute:'min'},
-  en:{home:'Home',allApps:'All Apps',settings:'Launcher Settings',dockTitle:'Favorites Dock',dockCountLbl:'Apps on dock',cardsTitle:'Displayed cards',cardPrayerLbl:'Prayer times card',cardWeatherLbl:'Weather card',locTitle:'Location',searchPlaceholder:'Search any city (Agadir, London...)',searchBtn:'Search',searching:'Searching...',noResults:'No matching cities',methodTitle:'Prayer method',methodAwqaf:'Awqaf (Morocco)',methodUmmAlQura:'Umm Al-Qura (Makkah)',prefsTitle:'Preferences',langLbl:'Language',tempLbl:'Temperature',clockLbl:'Clock',clockOffsetLbl:'Clock offset',wallTitle:'Wallpapers',galleryBtn:'Choose from gallery',devTitle:'Made by Ossamah',devQrHint:'Scan the QR with your phone camera',devQrClose:'Close',wifi:'Wi-Fi',ethernet:'Ethernet',offline:'Offline',netWeak:'Weak',matchesTitle:'Today’s Matches',ctxOpen:'Open app',ctxAddFav:'⭐ Add to favorites',ctxRemoveFav:'⭐ Remove from favorites',ctxUninstall:'🗑️ Uninstall from device',ctxMoveRight:'➡️ Move right',ctxMoveLeft:'⬅️ Move left',ctxToTop:'⏫ Move to top',mLive:'LIVE',mFt:'FT',mRefresh:'Refresh',mClose:'Close',mEmpty:'No matches today',mLoading:'Loading matches...',nextPrayerBadge:'Next prayer',nextPrayerChip:'Next',adhan:'Adhan',now:'Now',prayers:{Fajr:'Fajr',Sunrise:'Sunrise',Dhuhr:'Dhuhr',Asr:'Asr',Maghrib:'Maghrib',Isha:'Isha'},feels:'Feels like',humidity:'Humidity',wind:'Wind',speedUnit:'km/h',high:'High',low:'Low',sunrise:'Sunrise',sunset:'Sunset',greetings:{morning:'Good morning.',afternoon:'Good afternoon.',evening:'Good evening.',night:'Good night.'},weather:{clear:'Clear',mostlyClear:'Mostly clear',partlyCloudy:'Partly cloudy',overcast:'Overcast',fog:'Foggy',drizzle:'Drizzle',rain:'Rain',snow:'Snow',thunder:'Thunderstorms',day:'Day',night:'Night'},ssTitle:'Idle screensaver',ssIdleLbl:'Auto-activate after idle',ssPreviewBtn:'Preview screensaver',hadithDay:'Hadith of the day',byCity:'Local time in',inTime:'In',ssBgLbl:'Screensaver background',ssBgSame:'Same as home',ssDailyLbl:'Daily content',dailyBoth:'Ayah + Hadith',dailyAyah:'Ayah only',dailyHadith:'Hadith only',dailyTitleAyah:'Ayah of the day',dailyTitleHadith:'Hadith of the day',dailyTitleBoth:'Ayah & Hadith of the day',lastUpdated:'Last updated {t}',hijriOffsetLbl:'Hijri date offset',ssNightDimLbl:'Night dimming',occTitle:'Islamic occasions',occasions:{ramadan:'Ramadan',qadr:'Laylat al-Qadr',fitr:'Eid al-Fitr',arafah:'Arafah',adha:'Eid al-Adha',newyear:'Hijri New Year',ashura:'Ashura',mawlid:'Mawlid',isra:'Isra & Miraj'},occTodayPrefix:'Today:',occGreeting:'A blessed occasion to all',occThen:'Then',occRamadanDay:'Day {n} of Ramadan',minute:'min'}
+  ar:{home:'الرئيسية',backLbl:'رجوع',allApps:'كل التطبيقات',settings:'الإعدادات',dockTitle:'شريط التطبيقات المفضلة',dockCountLbl:'عدد التطبيقات في الشريط',cardsTitle:'البطاقات المعروضة',cardPrayerLbl:'بطاقة مواقيت الصلاة',cardWeatherLbl:'بطاقة الطقس',locTitle:'الموقع والمدينة',searchPlaceholder:'ابحث عن أي مدينة (أكادير، طنجة، باريس...)',searchBtn:'بحث',searching:'جاري البحث...',noResults:'لا توجد نتائج مطابقة',methodTitle:'حساب الصلاة',methodAwqaf:'وزارة الأوقاف (المغرب)',methodUmmAlQura:'أم القرى (مكة)',prefsTitle:'التفضيلات',langLbl:'اللغة',tempLbl:'الحرارة',clockLbl:'الساعة',clockOffsetLbl:'تصحيح الساعة',wallTitle:'الخلفيات',galleryBtn:'اختيار خلفية من المعرض',devTitle:'صنع بواسطة أسامة',devQrHint:'امسح الرمز بكاميرا هاتفك',devQrClose:'إغلاق',wifi:'واي فاي',ethernet:'إيثرنت',offline:'غير متصل',netWeak:'ضعيف',matchesTitle:'مباريات اليوم',ctxOpen:'فتح التطبيق',ctxAddFav:'⭐ إضافة إلى المفضلة',ctxRemoveFav:'⭐ إزالة من المفضلة',ctxUninstall:'🗑️ حذف التطبيق من الجهاز',ctxMoveRight:'➡️ تحريك لليمين',ctxMoveLeft:'⬅️ تحريك لليسار',ctxToTop:'⏫ نقل إلى الأول',mLive:'مباشر',mFt:'انتهت',mRefresh:'تحديث',mClose:'إغلاق',mEmpty:'لا توجد مباريات اليوم',mLoading:'جاري جلب المباريات...',nextPrayerBadge:'الصلاة القادمة',nextPrayerChip:'القادمة',adhan:'الأذان',now:'الآن',prayers:{Fajr:'الفجر',Sunrise:'الشروق',Dhuhr:'الظهر',Asr:'العصر',Maghrib:'المغرب',Isha:'العشاء'},feels:'المحسوسة',humidity:'الرطوبة',wind:'الرياح',speedUnit:'كم/س',high:'العظمى',low:'الصغرى',sunrise:'الشروق',sunset:'الغروب',greetings:{morning:'صباح الخير.',afternoon:'نهارك سعيد.',evening:'مساء الخير.',night:'ليلة طيبة.'},weather:{clear:'صافٍ',mostlyClear:'صافٍ غالباً',partlyCloudy:'غائم جزئياً',overcast:'غائم',fog:'ضباب',drizzle:'رذاذ',rain:'مطر',snow:'ثلوج',thunder:'عاصفة رعدية',day:'نهاراً',night:'ليلاً'},ssTitle:'شاشة التوقف',ssIdleLbl:'التفعيل التلقائي بعد الدخول',ssPreviewBtn:'معاينة شاشة التوقف',hadithDay:'حديث اليوم',byCity:'بتوقيت',inTime:'بعد',ssBgLbl:'خلفية شاشة التوقف',ssBgSame:'نفس الرئيسية',ssDailyLbl:'المحتوى اليومي',dailyBoth:'آية + حديث',dailyAyah:'آية فقط',dailyHadith:'حديث فقط',dailyTitleAyah:'آية اليوم',dailyTitleHadith:'حديث اليوم',dailyTitleBoth:'آية وحديث اليوم',lastUpdated:'آخر تحديث الساعة {t}',hijriOffsetLbl:'تعديل التاريخ الهجري',ssNightDimLbl:'خفض الإضاءة ليلاً',occTitle:'المناسبات الإسلامية',occasions:{ramadan:'رمضان',qadr:'ليلة القدر',fitr:'عيد الفطر',arafah:'يوم عرفة',adha:'عيد الأضحى',newyear:'رأس السنة الهجرية',ashura:'يوم عاشوراء',mawlid:'المولد النبوي الشريف',isra:'ليلة الإسراء والمعراج'},occDayOf:{ramadan:'اليوم بداية شهر رمضان',qadr:'اليوم ليلة القدر المباركة',fitr:'اليوم عيد الفطر المبارك',arafah:'اليوم يوم عرفة',adha:'اليوم عيد الأضحى المبارك',newyear:'اليوم رأس السنة الهجرية',ashura:'اليوم يوم عاشوراء',mawlid:'اليوم المولد النبوي الشريف',isra:'اليوم ذكرى الإسراء والمعراج'},occTodayPrefix:'اليوم',occGreeting:'كل عام وأنتم بخير',occThen:'ثم',occRamadanDay:'اليوم {n} من رمضان',minute:'دقيقة'},
+  fr:{home:'Accueil',backLbl:'Retour',allApps:'Toutes les apps',settings:'Paramètres du Launcher',dockTitle:'Dock des favoris',dockCountLbl:"Nombre d'applications",cardsTitle:'Cartes affichées',cardPrayerLbl:'Carte des prières',cardWeatherLbl:'Carte météo',locTitle:'Localisation',searchPlaceholder:'Rechercher une ville (Paris, Rabat...)',searchBtn:'Rechercher',searching:'Recherche...',noResults:'Aucun résultat',methodTitle:'Calcul des prières',methodAwqaf:'Habous (Maroc)',methodUmmAlQura:'Oumm Al-Qura (La Mecque)',prefsTitle:'Préférences',langLbl:'Langue',tempLbl:'Température',clockLbl:'Horloge',clockOffsetLbl:'Décalage horaire',wallTitle:'Fonds d’écran',galleryBtn:'Choisir depuis la galerie',devTitle:'Créé par Ossamah',devQrHint:'Scannez le QR avec votre téléphone',devQrClose:'Fermer',wifi:'Wi-Fi',ethernet:'Ethernet',offline:'Hors ligne',netWeak:'Faible',matchesTitle:'Matchs du jour',ctxOpen:'Ouvrir l’application',ctxAddFav:'⭐ Ajouter aux favoris',ctxRemoveFav:'⭐ Retirer des favoris',ctxUninstall:'🗑️ Désinstaller du device',ctxMoveRight:'➡️ Déplacer à droite',ctxMoveLeft:'⬅️ Déplacer à gauche',ctxToTop:'⏫ Mettre en premier',mLive:'DIRECT',mFt:'Terminé',mRefresh:'Actualiser',mClose:'Fermer',mEmpty:'Aucun match aujourd’hui',mLoading:'Chargement des matchs...',nextPrayerBadge:'Prochaine prière',nextPrayerChip:'Suivante',adhan:'Adhan',now:'Now',prayers:{Fajr:'Fajr',Sunrise:'Lever',Dhuhr:'Dhuhr',Asr:'Asr',Maghrib:'Maghrib',Isha:'Isha'},feels:'Ressentie',humidity:'Humidité',wind:'Vent',speedUnit:'km/h',high:'Max',low:'Min',sunrise:'Lever',sunset:'Coucher',greetings:{morning:'Bonjour.',afternoon:'Bon après-midi.',evening:'Bonsoir.',night:'Bonne nuit.'},weather:{clear:'Dégagé',mostlyClear:'Plutôt dégagé',partlyCloudy:'Peu nuageux',overcast:'Couvert',fog:'Brouillard',drizzle:'Bruine',rain:'Pluie',snow:'Neige',thunder:'Orages',day:'Jour',night:'Nuit'},ssTitle:'Écran de veille',ssIdleLbl:'Activation automatique après',ssPreviewBtn:'Aperçu de l\'écran de veille',hadithDay:'Hadith du jour',byCity:'Heure locale de',inTime:'Dans',ssBgLbl:'Fond de la veille',ssBgSame:'Comme l\'accueil',ssDailyLbl:'Contenu du jour',dailyBoth:'Verset + Hadith',dailyAyah:'Verset seulement',dailyHadith:'Hadith seulement',dailyTitleAyah:'Verset du jour',dailyTitleHadith:'Hadith du jour',dailyTitleBoth:'Verset & Hadith du jour',lastUpdated:'Mis à jour à {t}',hijriOffsetLbl:'Décalage du calendrier hégirien',ssNightDimLbl:'Assombrissement nocturne',occTitle:'Occasions islamiques',occasions:{ramadan:'Ramadan',qadr:'Laylat al-Qadr',fitr:'Aïd el-Fitr',arafah:'Arafat',adha:'Aïd al-Adha',newyear:'Nouvel an hégirien',ashura:'Achoura',mawlid:'Mawlid',isra:'Isra & Miraj'},occTodayPrefix:'Aujourd\u2019hui :',occGreeting:'Bonne occasion à tous',occThen:'Puis',occRamadanDay:'Jour {n} du Ramadan',minute:'min'},
+  en:{home:'Home',backLbl:'Back',allApps:'All Apps',settings:'Launcher Settings',dockTitle:'Favorites Dock',dockCountLbl:'Apps on dock',cardsTitle:'Displayed cards',cardPrayerLbl:'Prayer times card',cardWeatherLbl:'Weather card',locTitle:'Location',searchPlaceholder:'Search any city (Agadir, London...)',searchBtn:'Search',searching:'Searching...',noResults:'No matching cities',methodTitle:'Prayer method',methodAwqaf:'Awqaf (Morocco)',methodUmmAlQura:'Umm Al-Qura (Makkah)',prefsTitle:'Preferences',langLbl:'Language',tempLbl:'Temperature',clockLbl:'Clock',clockOffsetLbl:'Clock offset',wallTitle:'Wallpapers',galleryBtn:'Choose from gallery',devTitle:'Made by Ossamah',devQrHint:'Scan the QR with your phone camera',devQrClose:'Close',wifi:'Wi-Fi',ethernet:'Ethernet',offline:'Offline',netWeak:'Weak',matchesTitle:'Today’s Matches',ctxOpen:'Open app',ctxAddFav:'⭐ Add to favorites',ctxRemoveFav:'⭐ Remove from favorites',ctxUninstall:'🗑️ Uninstall from device',ctxMoveRight:'➡️ Move right',ctxMoveLeft:'⬅️ Move left',ctxToTop:'⏫ Move to top',mLive:'LIVE',mFt:'FT',mRefresh:'Refresh',mClose:'Close',mEmpty:'No matches today',mLoading:'Loading matches...',nextPrayerBadge:'Next prayer',nextPrayerChip:'Next',adhan:'Adhan',now:'Now',prayers:{Fajr:'Fajr',Sunrise:'Sunrise',Dhuhr:'Dhuhr',Asr:'Asr',Maghrib:'Maghrib',Isha:'Isha'},feels:'Feels like',humidity:'Humidity',wind:'Wind',speedUnit:'km/h',high:'High',low:'Low',sunrise:'Sunrise',sunset:'Sunset',greetings:{morning:'Good morning.',afternoon:'Good afternoon.',evening:'Good evening.',night:'Good night.'},weather:{clear:'Clear',mostlyClear:'Mostly clear',partlyCloudy:'Partly cloudy',overcast:'Overcast',fog:'Foggy',drizzle:'Drizzle',rain:'Rain',snow:'Snow',thunder:'Thunderstorms',day:'Day',night:'Night'},ssTitle:'Idle screensaver',ssIdleLbl:'Auto-activate after idle',ssPreviewBtn:'Preview screensaver',hadithDay:'Hadith of the day',byCity:'Local time in',inTime:'In',ssBgLbl:'Screensaver background',ssBgSame:'Same as home',ssDailyLbl:'Daily content',dailyBoth:'Ayah + Hadith',dailyAyah:'Ayah only',dailyHadith:'Hadith only',dailyTitleAyah:'Ayah of the day',dailyTitleHadith:'Hadith of the day',dailyTitleBoth:'Ayah & Hadith of the day',lastUpdated:'Last updated {t}',hijriOffsetLbl:'Hijri date offset',ssNightDimLbl:'Night dimming',occTitle:'Islamic occasions',occasions:{ramadan:'Ramadan',qadr:'Laylat al-Qadr',fitr:'Eid al-Fitr',arafah:'Arafah',adha:'Eid al-Adha',newyear:'Hijri New Year',ashura:'Ashura',mawlid:'Mawlid',isra:'Isra & Miraj'},occTodayPrefix:'Today:',occGreeting:'A blessed occasion to all',occThen:'Then',occRamadanDay:'Day {n} of Ramadan',minute:'min'}
 };
 
 const BUILTIN_WALLPAPERS = [
@@ -2509,6 +2527,44 @@ function lpFireShort(info){
   if(info.place==='drawer'){ try{ closeAllAppsDrawer(); }catch(e){} }
   launchAppFor(app);
 }
+
+/* ═══ الريموت من جذور أندرويد (MainActivity.dispatchKeyEvent) ═══
+   الضغط المطول يُدار أصلاً في Kotlin (700ms) ليعمل على كل أجهزة TV Box،
+   وهذه الدوال هي الطرف الآخر الذي ينفّذ النتيجة داخل الواجهة. */
+window.__tvRemoteCancelPending=function(){ lpCancel(); };
+window.__tvRemoteOkLong=function(){
+  try{
+    lpCancel();
+    if(ctxIsOpen()) return true;                    /* النافذة مفتوحة بالفعل */
+    const el=(dpadFocused&&document.body.contains(dpadFocused))?dpadFocused:null;
+    if(!el) return false;
+    const info=appCardInfo(el);
+    if(!info) return false;                         /* ليس بطاقة تطبيق: نترك النقرة العادية */
+    lpLongDone=true;
+    lpSuppressUntil=Date.now()+1200; lpSuppressEl=info.el;
+    lpSwallowUntil=Date.now()+1200;
+    openAppCtx(info.id,info.place,info.el);
+    return true;
+  }catch(err){ console.warn('[tv-ok-long]',err); return false; }
+};
+window.__tvRemoteOkShort=function(){
+  try{
+    if(ctxIsOpen()) return true;                    /* أزرار النافذة تُنفّذ عبر keydown */
+    lpCancel();
+    const el=(dpadFocused&&document.body.contains(dpadFocused))?dpadFocused:document.activeElement;
+    if(!el) return false;
+    if(lpSuppressEl&&Date.now()<lpSuppressUntil&&el===lpSuppressEl) return true;
+    if(el.tagName==='INPUT'){
+      if(el.id==='city-search-input'&&el.value&&el.value.trim()){ clearTimeout(searchTimer); searchCity(true); el.blur(); }
+      else { try{ el.focus(); }catch(e){} }
+      return true;
+    }
+    lpProgAt=Date.now(); lpProgEl=el;
+    el.click();
+    return true;
+  }catch(err){ console.warn('[tv-ok-short]',err); return false; }
+};
+
 document.addEventListener('keydown',e=>{
   const k=e.key, act=document.activeElement, typing=act&&act.tagName==='INPUT';
   const sm=document.getElementById('settings-modal'), dr=document.getElementById('all-apps-drawer'), qro=document.getElementById('qr-overlay'), mmo=document.getElementById('matches-modal');
@@ -2521,10 +2577,19 @@ document.addEventListener('keydown',e=>{
     else if(dr.classList.contains('open')){ e.preventDefault(); closeAllAppsDrawer(); }
     return;
   }
-  /* زر القائمة على درج التطبيقات = تبديل المفضلة */
+  /* زر القائمة على الريموت (Menu / 82) = فتح خيارات التطبيق فوراً */
+  if(k==='Menu'||e.keyCode===82){
+    e.preventDefault(); lpCancel();
+    if(window.__tvRemoteOkLong) window.__tvRemoteOkLong();
+    return;
+  }
+  /* زر القائمة السياقية (ContextMenu / 93) */
   if(k==='ContextMenu'||e.keyCode===93){
     if(dr.classList.contains('open')&&dpadFocused&&dpadFocused.classList&&dpadFocused.classList.contains('dapp')&&dpadFocused.dataset.favId){
       e.preventDefault(); toggleFav(dpadFocused.dataset.favId);
+    } else {
+      e.preventDefault(); lpCancel();
+      if(window.__tvRemoteOkLong) window.__tvRemoteOkLong();
     }
     return;
   }
@@ -2532,9 +2597,11 @@ document.addEventListener('keydown',e=>{
     if(typing){ e.preventDefault(); clearTimeout(searchTimer); searchCity(true); act.blur(); return; }
     if(!dpadFocused) return;
     e.preventDefault();
-    if(e.repeat||Date.now()<lpSwallowUntil) return; /* لا نكرّر التنفيذ أثناء استمرار الضغط */
+    if(e.repeat) return; /* لا نكرّر التنفيذ أثناء استمرار الضغط */
     /* بطاقة تطبيق (شريط المفضلة أو الدرج): ضغط مطول 800ms = خيارات، ضغط قصير = تشغيل */
     const info=appCardInfo(dpadFocused);
+    /* كبت تكرار OK بعد الفتح يخصّ بطاقات التطبيقات فقط — لا يحجب أزرار النافذة */
+    if(info&&Date.now()<lpSwallowUntil) return;
     if(info){
       lpBegin(info,'key');
       return;

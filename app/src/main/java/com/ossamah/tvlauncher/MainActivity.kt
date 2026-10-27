@@ -10,6 +10,9 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.SystemClock
 import android.util.Base64
 import android.view.KeyEvent
 import android.view.View
@@ -33,6 +36,17 @@ class MainActivity : ComponentActivity() {
 
     /** Single bridge instance — kept referenced so onResume() can invalidate its app cache. */
     private lateinit var bridge: AndroidTVBridge
+
+    // ─────────────────────────────────────────── REMOTE OK: LONG PRESS (native)
+    // Android TV often swallows KEYCODE_DPAD_CENTER inside the WebView (or turns
+    // it into a click before the JS timer completes). We therefore own the timer
+    // here, at the root of the activity, and only swallow the matching ACTION_UP
+    // when the long press actually opened something.
+    private val okHandler = Handler(Looper.getMainLooper())
+    private var okLongFired = false
+    private var okLongOpened = false
+    private var okDownTime = 0L
+    private var okDownConsumed = true
 
     /** Native wallpaper picker (ACTION_GET_CONTENT -> Base64 -> WebView). */
     // Kotlin bridge (AndroidTVBridge) needs access to this launcher.
@@ -124,7 +138,18 @@ class MainActivity : ComponentActivity() {
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
-        if (hasFocus) hideSystemBars()
+        if (hasFocus) {
+            hideSystemBars()
+        } else {
+            okHandler.removeCallbacksAndMessages(null)
+            okLongFired = false
+        }
+    }
+
+    override fun onPause() {
+        okHandler.removeCallbacksAndMessages(null)
+        okLongFired = false
+        super.onPause()
     }
 
     override fun onResume() {
@@ -162,6 +187,97 @@ class MainActivity : ComponentActivity() {
         return super.onKeyDown(keyCode, event)
     }
 
+    // ------------------------------------------------ OK long press (native)
+
+    /**
+     * Root-level key handling for the remote OK/Center button.
+     *
+     * Timeline: DOWN(repeat 0) starts a 700ms timer and is forwarded to the
+     * WebView (so focus, IME and short clicks keep working). If the timer fires
+     * — or the remote starts repeating — we open the quick-options window from
+     * JS and set [okLongFired]. The matching ACTION_UP is then swallowed, which
+     * is what stops the WebView from launching the app on top of the dialog.
+     */
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        // Remote MENU key = direct shortcut for the quick-options window.
+        if (event.keyCode == KeyEvent.KEYCODE_MENU) {
+            if (event.action == KeyEvent.ACTION_DOWN && event.repeatCount == 0) {
+                runCatching {
+                    webView.evaluateJavascript(
+                        "window.__tvRemoteOkLong&&window.__tvRemoteOkLong()", null
+                    )
+                }
+            }
+            return true
+        }
+
+        val isOk = event.keyCode == KeyEvent.KEYCODE_DPAD_CENTER ||
+            event.keyCode == KeyEvent.KEYCODE_ENTER ||
+            event.keyCode == KeyEvent.KEYCODE_NUMPAD_ENTER
+        if (!isOk) return super.dispatchKeyEvent(event)
+
+        when (event.action) {
+            KeyEvent.ACTION_DOWN -> {
+                if (event.repeatCount == 0) {
+                    okDownTime = SystemClock.uptimeMillis()
+                    okLongFired = false
+                    okLongOpened = false
+                    okHandler.removeCallbacksAndMessages(null)
+                    okHandler.postDelayed({ fireOkLong() }, OK_LONG_MS)
+                    okDownConsumed = super.dispatchKeyEvent(event)
+                    return okDownConsumed
+                }
+                // Remote auto-repeat: fire as soon as the hold passes the limit,
+                // then swallow every repeat so JS never sees a burst of keydowns.
+                if (!okLongFired &&
+                    (event.repeatCount >= 2 ||
+                        SystemClock.uptimeMillis() - okDownTime >= OK_LONG_MS)
+                ) {
+                    fireOkLong()
+                }
+                return true
+            }
+
+            KeyEvent.ACTION_UP -> {
+                okHandler.removeCallbacksAndMessages(null)
+                val fired = okLongFired
+                val opened = okLongOpened
+                okLongFired = false
+                if (fired) {
+                    // Long press on a non app-card (a chip, a switch...) → behave like a click.
+                    if (!opened) shortClickInWebView()
+                    return true
+                }
+                if (!okDownConsumed) {
+                    // The WebView never received the DOWN: emulate a short click.
+                    shortClickInWebView()
+                    return true
+                }
+                return super.dispatchKeyEvent(event)
+            }
+        }
+        return super.dispatchKeyEvent(event)
+    }
+
+    /** Fires the JS long-press handler and records whether it opened a window. */
+    private fun fireOkLong() {
+        okLongFired = true
+        okLongOpened = false
+        runCatching {
+            webView.evaluateJavascript(
+                "(function(){try{return (window.__tvRemoteOkLong&&window.__tvRemoteOkLong())?'1':'0';}" +
+                    "catch(e){return '0';}})()"
+            ) { result -> if (result != null && result.contains('1')) okLongOpened = true }
+        }
+    }
+
+    /** Emulates a normal OK click inside the web UI (used when WebView missed the key). */
+    private fun shortClickInWebView() {
+        runCatching {
+            webView.evaluateJavascript("window.__tvRemoteOkShort&&window.__tvRemoteOkShort()", null)
+        }
+    }
+
     // ------------------------------------------------------------ Wallpaper
 
     private fun onWallpaperPicked(uri: Uri) {
@@ -184,6 +300,11 @@ class MainActivity : ComponentActivity() {
                 // Never crash on a bad image pick.
             }
         }.start()
+    }
+
+    private companion object {
+        /** Long-press threshold for the remote OK button (ms). */
+        const val OK_LONG_MS = 700L
     }
 }
 
