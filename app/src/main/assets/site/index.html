@@ -338,7 +338,8 @@ i[data-ic]{display:inline-flex;align-items:center;justify-content:center;font-st
   font-size:22px;font-weight:800;color:var(--gold);line-height:1;overflow:hidden}
 .mm-name{font-size:21px;font-weight:700;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mm-mid{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-width:220px;text-align:center;direction:rtl}
-.mm-sc{display:inline-flex;align-items:baseline;gap:6px;white-space:nowrap}
+/* النتيجة تُقرأ دائماً يسار→يمين (المضيف على اليسار): direction:ltr يمنع عكس الفائز/الخاسر في RTL */
+.mm-sc{display:inline-flex;align-items:baseline;gap:6px;white-space:nowrap;direction:ltr}
 .mm-sc-v{font-size:32px;font-weight:700}
 .mm-sc-sep{font-size:26px;font-weight:700;color:var(--ink3)}
 .mm-ft-b{font-size:15px;font-weight:700;padding:3px 16px;border-radius:20px;background:rgba(255,255,255,.10);color:var(--ink2)}
