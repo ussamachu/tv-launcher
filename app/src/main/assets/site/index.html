@@ -272,22 +272,22 @@ i[data-ic]{display:inline-flex;align-items:center;justify-content:center;font-st
   background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.20);color:#fff;
   font-size:23px;font-weight:700;transition:background .15s,color .15s,border-color .15s}
 .sp-back.dpad-active{background:var(--accent);border-color:transparent;color:#07111f}
-.sp-body{flex:1;display:grid;grid-template-columns:1fr 1fr;min-height:0;overflow:hidden;
-  gap:40px;padding:22px 64px 28px}
-.sp-col{padding:0;display:flex;flex-direction:column;gap:16px;min-height:0;overflow-y:auto;
-  scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.22) transparent}
-.sp-col::-webkit-scrollbar{width:10px}
-.sp-col::-webkit-scrollbar-track{background:transparent}
-.sp-col::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);border-radius:10px}
-.sp-sec{display:flex;flex-direction:column;gap:8px;min-height:0;flex-shrink:0}
+/* عمود واحد قابل للتمرير — تتبع التركيز بالريموت */
+.sp-body{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;overflow-y:auto;
+  padding:32px 64px 80px;gap:28px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.22) transparent}
+.sp-body::-webkit-scrollbar{width:10px}
+.sp-body::-webkit-scrollbar-track{background:transparent}
+.sp-body::-webkit-scrollbar-thumb{background:rgba(255,255,255,.2);border-radius:10px}
+.sp-sec,#dev-card{width:100%;max-width:1180px;flex-shrink:0}
+.sp-sec{display:flex;flex-direction:column;gap:8px;min-height:0}
 .sp-sec h3{font-size:21px;font-weight:700;color:var(--ink3);letter-spacing:.2px;margin:0;display:flex;align-items:center;gap:10px}
 .sp-sec h3::before{content:'';width:5px;height:18px;border-radius:3px;background:var(--accent);opacity:.9;flex-shrink:0}
 .sp-card{background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.085);border-radius:22px;padding:4px 8px;display:flex;flex-direction:column;min-height:0}
-.srow{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:7px 10px;font-size:22px;font-weight:500;border-radius:14px}
+.srow{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:14px 18px;font-size:23px;font-weight:500;border-radius:14px}
 .srow + .srow{box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
 .srow.dpad-focusable:hover{background:rgba(255,255,255,.04)}
 .opts{display:flex;flex-wrap:wrap;gap:8px}
-.chip{height:46px;padding:0 20px;border-radius:15px;font-size:20px;font-weight:600;display:flex;align-items:center;
+.chip{height:48px;padding:0 20px;border-radius:15px;font-size:20px;font-weight:600;display:flex;align-items:center;
   background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.10);color:var(--ink2);transition:background .15s,color .15s,border-color .15s}
 .chip.sel{background:var(--accent);border-color:var(--accent);color:#07111f}
 /* Radio — دائرة اختيار واضحة لكل خيار حصري */
@@ -374,7 +374,7 @@ i[data-ic]{display:inline-flex;align-items:center;justify-content:center;font-st
 .tg.on{background:#22c55e;box-shadow:0 0 16px rgba(34,197,94,.55)}
 .tg.on::after{transform:translateX(32px)}
 [dir="rtl"] .tg.on::after{transform:translateX(-32px)}
-.dev{padding:14px 18px;border-radius:20px;display:flex;align-items:center;gap:14px;margin-top:auto;flex-shrink:0;
+.dev{padding:14px 18px;border-radius:20px;display:flex;align-items:center;gap:14px;margin-top:0;flex-shrink:0;
   background:linear-gradient(135deg,rgba(125,180,255,.14),rgba(255,198,92,.08));border:1px solid rgba(255,255,255,.09)}
 .dev .badge{width:46px;height:46px;border-radius:50%;background:var(--accent);color:#07111f;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .dev .t1{font-size:21px;font-weight:700}.dev .t2{font-size:16px;color:var(--ink3);margin-top:2px}
@@ -579,139 +579,132 @@ i[data-ic]{display:inline-flex;align-items:center;justify-content:center;font-st
         <div class="sp-back dpad-focusable" id="s-close" tabindex="0" onclick="closeSettings()"><i data-ic="x" data-s="30"></i><span data-i18n="backLbl"></span></div>
       </div>
       <div class="sp-body">
-        <!-- COLUMN A -->
-        <div class="sp-col">
-          <section class="sp-sec">
-            <h3 data-i18n="locTitle"></h3>
-            <div class="sp-card">
-              <div class="srow search">
-                <input type="text" id="city-search-input" class="inp dpad-focusable" tabindex="0" />
-                <button class="btn dpad-focusable" tabindex="0" onclick="searchCity(true)"><i data-ic="search" data-s="24"></i><span data-i18n="searchBtn"></span></button>
-              </div>
-              <div class="city-results" id="city-results"></div>
-              <div class="opts" id="quick-cities"></div>
+        <section class="sp-sec">
+          <h3 data-i18n="locTitle"></h3>
+          <div class="sp-card">
+            <div class="srow search">
+              <input type="text" id="city-search-input" class="inp dpad-focusable" tabindex="0" />
+              <button class="btn dpad-focusable" tabindex="0" onclick="searchCity(true)"><i data-ic="search" data-s="24"></i><span data-i18n="searchBtn"></span></button>
             </div>
-          </section>
-
-          <section class="sp-sec">
-            <h3 data-i18n="prefsTitle"></h3>
-            <div class="sp-card">
-              <div class="srow"><span data-i18n="langLbl"></span>
-                <div class="opts">
-                  <div class="chip dpad-focusable" id="lang-ar" tabindex="0" onclick="setLanguage('ar')">العربية</div>
-                  <div class="chip dpad-focusable" id="lang-fr" tabindex="0" onclick="setLanguage('fr')">Français</div>
-                  <div class="chip dpad-focusable" id="lang-en" tabindex="0" onclick="setLanguage('en')">English</div>
-                </div></div>
-              <div class="srow"><span data-i18n="tempLbl"></span>
-                <div class="opts">
-                  <div class="chip dpad-focusable" id="chip-c" tabindex="0" onclick="setTempUnit('C')">°C</div>
-                  <div class="chip dpad-focusable" id="chip-f" tabindex="0" onclick="setTempUnit('F')">°F</div>
-                </div></div>
-              <div class="srow"><span data-i18n="clockLbl"></span>
-                <div class="opts">
-                  <div class="chip dpad-focusable" id="chip-24" tabindex="0" onclick="setClockFormat(24)">24h</div>
-                  <div class="chip dpad-focusable" id="chip-12" tabindex="0" onclick="setClockFormat(12)">12h</div>
-                </div></div>
-              <div class="srow"><span data-i18n="clockOffsetLbl"></span>
-                <div class="opts">
-                  <div class="chip dpad-focusable" id="cof-m2" tabindex="0" onclick="setClockOffset(-2)">-2</div>
-                  <div class="chip dpad-focusable" id="cof-m1" tabindex="0" onclick="setClockOffset(-1)">-1</div>
-                  <div class="chip dpad-focusable" id="cof-0" tabindex="0" onclick="setClockOffset(0)">0</div>
-                  <div class="chip dpad-focusable" id="cof-1" tabindex="0" onclick="setClockOffset(1)">+1</div>
-                  <div class="chip dpad-focusable" id="cof-2" tabindex="0" onclick="setClockOffset(2)">+2</div>
-                </div></div>
-              <div class="srow"><span data-i18n="methodTitle"></span>
-                <div class="opts">
-                  <div class="chip dpad-focusable" id="method-21" tabindex="0" onclick="setPrayerMethod(21)"></div>
-                  <div class="chip dpad-focusable" id="method-4" tabindex="0" onclick="setPrayerMethod(4)"></div>
-                </div></div>
-            </div>
-          </section>
-
-          <section class="sp-sec">
-            <h3 data-i18n="wallTitle"></h3>
-            <div class="sp-card walls">
-              <div class="wp-strip" id="wallpapers-strip"></div>
-              <button class="btn ghost dpad-focusable" tabindex="0" onclick="pickWallpaper()"><i data-ic="image" data-s="26"></i><span data-i18n="galleryBtn"></span></button>
-            </div>
-            <input type="file" id="wallpaper-file-input" accept="image/*" style="display:none" onchange="handleWallpaperFile(event)" />
-          </section>
-          <div class="dev dpad-focusable" id="dev-card" tabindex="0" onclick="openDevLink()">
-            <div class="badge"><i data-ic="info" data-s="28"></i></div>
-            <div class="t1" data-i18n="devTitle"></div>
+            <div class="city-results" id="city-results"></div>
+            <div class="opts" id="quick-cities"></div>
           </div>
+        </section>
 
-        </div>
+        <section class="sp-sec">
+          <h3 data-i18n="prefsTitle"></h3>
+          <div class="sp-card">
+            <div class="srow"><span data-i18n="langLbl"></span>
+              <div class="opts">
+                <div class="chip dpad-focusable" id="lang-ar" tabindex="0" onclick="setLanguage('ar')">العربية</div>
+                <div class="chip dpad-focusable" id="lang-fr" tabindex="0" onclick="setLanguage('fr')">Français</div>
+                <div class="chip dpad-focusable" id="lang-en" tabindex="0" onclick="setLanguage('en')">English</div>
+              </div></div>
+            <div class="srow"><span data-i18n="tempLbl"></span>
+              <div class="opts">
+                <div class="chip dpad-focusable" id="chip-c" tabindex="0" onclick="setTempUnit('C')">°C</div>
+                <div class="chip dpad-focusable" id="chip-f" tabindex="0" onclick="setTempUnit('F')">°F</div>
+              </div></div>
+            <div class="srow"><span data-i18n="clockLbl"></span>
+              <div class="opts">
+                <div class="chip dpad-focusable" id="chip-24" tabindex="0" onclick="setClockFormat(24)">24h</div>
+                <div class="chip dpad-focusable" id="chip-12" tabindex="0" onclick="setClockFormat(12)">12h</div>
+              </div></div>
+            <div class="srow"><span data-i18n="clockOffsetLbl"></span>
+              <div class="opts">
+                <div class="chip dpad-focusable" id="cof-m2" tabindex="0" onclick="setClockOffset(-2)">-2</div>
+                <div class="chip dpad-focusable" id="cof-m1" tabindex="0" onclick="setClockOffset(-1)">-1</div>
+                <div class="chip dpad-focusable" id="cof-0" tabindex="0" onclick="setClockOffset(0)">0</div>
+                <div class="chip dpad-focusable" id="cof-1" tabindex="0" onclick="setClockOffset(1)">+1</div>
+                <div class="chip dpad-focusable" id="cof-2" tabindex="0" onclick="setClockOffset(2)">+2</div>
+              </div></div>
+            <div class="srow"><span data-i18n="methodTitle"></span>
+              <div class="opts">
+                <div class="chip dpad-focusable" id="method-21" tabindex="0" onclick="setPrayerMethod(21)"></div>
+                <div class="chip dpad-focusable" id="method-4" tabindex="0" onclick="setPrayerMethod(4)"></div>
+              </div></div>
+          </div>
+        </section>
 
-        <!-- COLUMN B -->
-        <div class="sp-col">
-          <section class="sp-sec">
-            <h3 data-i18n="dockTitle"></h3>
-            <div class="sp-card">
-              <div class="srow"><span data-i18n="dockCountLbl"></span>
-                <div class="opts" id="dock-count-chips">
-                  <div class="chip dpad-focusable" tabindex="0" onclick="setDockMax(5)">5</div>
-                  <div class="chip dpad-focusable" tabindex="0" onclick="setDockMax(6)">6</div>
-                  <div class="chip dpad-focusable" tabindex="0" onclick="setDockMax(7)">7</div>
-                  <div class="chip dpad-focusable" tabindex="0" onclick="setDockMax(8)">8</div>
-                </div></div>
-            </div>
-          </section>
+        <section class="sp-sec">
+          <h3 data-i18n="cardsTitle"></h3>
+          <div class="sp-card">
+            <div class="srow dpad-focusable" tabindex="0" onclick="toggleCard('prayer')"><span data-i18n="cardPrayerLbl"></span><div class="tg" id="sw-prayer"></div></div>
+            <div class="srow dpad-focusable" tabindex="0" onclick="toggleCard('weather')"><span data-i18n="cardWeatherLbl"></span><div class="tg" id="sw-weather"></div></div>
+          </div>
+        </section>
 
-          <section class="sp-sec">
-            <h3 data-i18n="cardsTitle"></h3>
-            <div class="sp-card">
-              <div class="srow dpad-focusable" tabindex="0" onclick="toggleCard('prayer')"><span data-i18n="cardPrayerLbl"></span><div class="tg" id="sw-prayer"></div></div>
-              <div class="srow dpad-focusable" tabindex="0" onclick="toggleCard('weather')"><span data-i18n="cardWeatherLbl"></span><div class="tg" id="sw-weather"></div></div>
-            </div>
-          </section>
+        <section class="sp-sec">
+          <h3 data-i18n="dockTitle"></h3>
+          <div class="sp-card">
+            <div class="srow"><span data-i18n="dockCountLbl"></span>
+              <div class="opts" id="dock-count-chips">
+                <div class="chip dpad-focusable" tabindex="0" onclick="setDockMax(5)">5</div>
+                <div class="chip dpad-focusable" tabindex="0" onclick="setDockMax(6)">6</div>
+                <div class="chip dpad-focusable" tabindex="0" onclick="setDockMax(7)">7</div>
+                <div class="chip dpad-focusable" tabindex="0" onclick="setDockMax(8)">8</div>
+              </div></div>
+          </div>
+        </section>
 
-          <section class="sp-sec">
-            <h3 data-i18n="ssTitle"></h3>
-            <div class="sp-card">
-              <div class="srow"><span data-i18n="ssIdleLbl"></span>
-                <div class="opts">
-                  <div class="chip dpad-focusable" id="ss-1" tabindex="0" onclick="setScreensaverDelay(1)">1 min</div>
-                  <div class="chip dpad-focusable" id="ss-3" tabindex="0" onclick="setScreensaverDelay(3)">3 min</div>
-                  <div class="chip dpad-focusable" id="ss-5" tabindex="0" onclick="setScreensaverDelay(5)">5 min</div>
-                </div></div>
-              <div class="srow"><span data-i18n="ssBgLbl"></span>
-                <div class="opts">
-                  <div class="chip dpad-focusable" id="ssi-0" tabindex="0" onclick="setSsBgInterval(0)" data-i18n="ssBgSame"></div>
-                  <div class="chip dpad-focusable" id="ssi-10" tabindex="0" onclick="setSsBgInterval(10)">10 min</div>
-                  <div class="chip dpad-focusable" id="ssi-30" tabindex="0" onclick="setSsBgInterval(30)">30 min</div>
-                  <div class="chip dpad-focusable" id="ssi-60" tabindex="0" onclick="setSsBgInterval(60)">60 min</div>
-                </div></div>
-              <div class="srow"><span data-i18n="ssDailyLbl"></span>
-                <div class="opts">
-                  <div class="chip dpad-focusable" id="ssm-both" tabindex="0" onclick="setSsDailyMode('both')"></div>
-                  <div class="chip dpad-focusable" id="ssm-ayah" tabindex="0" onclick="setSsDailyMode('ayah')"></div>
-                  <div class="chip dpad-focusable" id="ssm-hadith" tabindex="0" onclick="setSsDailyMode('hadith')"></div>
-                </div></div>
-              <div class="srow"><span data-i18n="hijriOffsetLbl"></span>
-                <div class="opts">
-                  <div class="chip dpad-focusable" id="hoff-m2" tabindex="0" onclick="setHijriOffset(-2)">-2</div>
-                  <div class="chip dpad-focusable" id="hoff-m1" tabindex="0" onclick="setHijriOffset(-1)">-1</div>
-                  <div class="chip dpad-focusable" id="hoff-0" tabindex="0" onclick="setHijriOffset(0)">0</div>
-                  <div class="chip dpad-focusable" id="hoff-1" tabindex="0" onclick="setHijriOffset(1)">+1</div>
-                  <div class="chip dpad-focusable" id="hoff-2" tabindex="0" onclick="setHijriOffset(2)">+2</div>
-                </div></div>
-              <div class="srow dpad-focusable" tabindex="0" onclick="setSsNightDim()"><span data-i18n="ssNightDimLbl"></span><div class="tg" id="sw-ssdim"></div></div>
-              <div class="srow"><span data-i18n="occTitle"></span>
-                <div class="opts">
-                  <div class="chip chip-check dpad-focusable" id="occ-ramadan" tabindex="0" onclick="setOccToggle('ramadan')"></div>
-                  <div class="chip chip-check dpad-focusable" id="occ-qadr" tabindex="0" onclick="setOccToggle('qadr')"></div>
-                  <div class="chip chip-check dpad-focusable" id="occ-fitr" tabindex="0" onclick="setOccToggle('fitr')"></div>
-                  <div class="chip chip-check dpad-focusable" id="occ-arafah" tabindex="0" onclick="setOccToggle('arafah')"></div>
-                  <div class="chip chip-check dpad-focusable" id="occ-adha" tabindex="0" onclick="setOccToggle('adha')"></div>
-                  <div class="chip chip-check dpad-focusable" id="occ-newyear" tabindex="0" onclick="setOccToggle('newyear')"></div>
-                  <div class="chip chip-check dpad-focusable" id="occ-ashura" tabindex="0" onclick="setOccToggle('ashura')"></div>
-                  <div class="chip chip-check dpad-focusable" id="occ-mawlid" tabindex="0" onclick="setOccToggle('mawlid')"></div>
-                  <div class="chip chip-check dpad-focusable" id="occ-isra" tabindex="0" onclick="setOccToggle('isra')"></div>
-                </div></div>
-            </div>
-          </section>
+        <section class="sp-sec">
+          <h3 data-i18n="wallTitle"></h3>
+          <div class="sp-card walls">
+            <div class="wp-strip" id="wallpapers-strip"></div>
+            <button class="btn ghost dpad-focusable" tabindex="0" onclick="pickWallpaper()"><i data-ic="image" data-s="26"></i><span data-i18n="galleryBtn"></span></button>
+          </div>
+          <input type="file" id="wallpaper-file-input" accept="image/*" style="display:none" onchange="handleWallpaperFile(event)" />
+        </section>
 
+        <section class="sp-sec">
+          <h3 data-i18n="ssTitle"></h3>
+          <div class="sp-card">
+            <div class="srow"><span data-i18n="ssIdleLbl"></span>
+              <div class="opts">
+                <div class="chip dpad-focusable" id="ss-1" tabindex="0" onclick="setScreensaverDelay(1)">1 min</div>
+                <div class="chip dpad-focusable" id="ss-3" tabindex="0" onclick="setScreensaverDelay(3)">3 min</div>
+                <div class="chip dpad-focusable" id="ss-5" tabindex="0" onclick="setScreensaverDelay(5)">5 min</div>
+              </div></div>
+            <div class="srow"><span data-i18n="ssBgLbl"></span>
+              <div class="opts">
+                <div class="chip dpad-focusable" id="ssi-0" tabindex="0" onclick="setSsBgInterval(0)" data-i18n="ssBgSame"></div>
+                <div class="chip dpad-focusable" id="ssi-10" tabindex="0" onclick="setSsBgInterval(10)">10 min</div>
+                <div class="chip dpad-focusable" id="ssi-30" tabindex="0" onclick="setSsBgInterval(30)">30 min</div>
+                <div class="chip dpad-focusable" id="ssi-60" tabindex="0" onclick="setSsBgInterval(60)">60 min</div>
+              </div></div>
+            <div class="srow"><span data-i18n="ssDailyLbl"></span>
+              <div class="opts">
+                <div class="chip dpad-focusable" id="ssm-both" tabindex="0" onclick="setSsDailyMode('both')"></div>
+                <div class="chip dpad-focusable" id="ssm-ayah" tabindex="0" onclick="setSsDailyMode('ayah')"></div>
+                <div class="chip dpad-focusable" id="ssm-hadith" tabindex="0" onclick="setSsDailyMode('hadith')"></div>
+              </div></div>
+            <div class="srow"><span data-i18n="hijriOffsetLbl"></span>
+              <div class="opts">
+                <div class="chip dpad-focusable" id="hoff-m2" tabindex="0" onclick="setHijriOffset(-2)">-2</div>
+                <div class="chip dpad-focusable" id="hoff-m1" tabindex="0" onclick="setHijriOffset(-1)">-1</div>
+                <div class="chip dpad-focusable" id="hoff-0" tabindex="0" onclick="setHijriOffset(0)">0</div>
+                <div class="chip dpad-focusable" id="hoff-1" tabindex="0" onclick="setHijriOffset(1)">+1</div>
+                <div class="chip dpad-focusable" id="hoff-2" tabindex="0" onclick="setHijriOffset(2)">+2</div>
+              </div></div>
+            <div class="srow dpad-focusable" tabindex="0" onclick="setSsNightDim()"><span data-i18n="ssNightDimLbl"></span><div class="tg" id="sw-ssdim"></div></div>
+            <div class="srow"><span data-i18n="occTitle"></span>
+              <div class="opts">
+                <div class="chip chip-check dpad-focusable" id="occ-ramadan" tabindex="0" onclick="setOccToggle('ramadan')"></div>
+                <div class="chip chip-check dpad-focusable" id="occ-qadr" tabindex="0" onclick="setOccToggle('qadr')"></div>
+                <div class="chip chip-check dpad-focusable" id="occ-fitr" tabindex="0" onclick="setOccToggle('fitr')"></div>
+                <div class="chip chip-check dpad-focusable" id="occ-arafah" tabindex="0" onclick="setOccToggle('arafah')"></div>
+                <div class="chip chip-check dpad-focusable" id="occ-adha" tabindex="0" onclick="setOccToggle('adha')"></div>
+                <div class="chip chip-check dpad-focusable" id="occ-newyear" tabindex="0" onclick="setOccToggle('newyear')"></div>
+                <div class="chip chip-check dpad-focusable" id="occ-ashura" tabindex="0" onclick="setOccToggle('ashura')"></div>
+                <div class="chip chip-check dpad-focusable" id="occ-mawlid" tabindex="0" onclick="setOccToggle('mawlid')"></div>
+                <div class="chip chip-check dpad-focusable" id="occ-isra" tabindex="0" onclick="setOccToggle('isra')"></div>
+              </div></div>
+          </div>
+        </section>
+
+        <div class="dev dpad-focusable" id="dev-card" tabindex="0" onclick="openDevLink()">
+          <div class="badge"><i data-ic="info" data-s="28"></i></div>
+          <div class="t1" data-i18n="devTitle"></div>
         </div>
       </div>
     </div>
@@ -2443,6 +2436,8 @@ function dpadSetFocus(el){
   if(dpadFocused) dpadFocused.classList.remove('dpad-active');
   dpadFocused=el; el.classList.add('dpad-active');
   setDockLabel(el);
+  /* تمرير فوري خفيف يتبع التركيز داخل الحاوية القابلة للتمرير (صفحة الإعدادات).
+     behavior:'smooth' غير موثوق داخل WebView على أجهزة التلفاز لذا نستخدم الفوري. */
   try{ el.scrollIntoView({block:'nearest',inline:'nearest'}); }catch(e){}
 }
 function getFocusables(scope){
@@ -2452,17 +2447,26 @@ function getFocusables(scope){
 }
 function findNearest(cur,dir,list){
   const c=cur.getBoundingClientRect(), cx=c.left+c.width/2, cy=c.top+c.height/2;
-  let best=null,bs=Infinity;
+  /* صفحة الإعدادات صارت عموداً واحداً: الأولوية للسطر الأقرب عمودياً ثم الأقرب أفقياً
+     حتى لا تتخطى الأسهم أقساماً كاملة عند وجود صفوف عريضة وشرائح على الأطراف. */
+  const inSpBody=el=>!!(el.closest&&el.closest('#settings-modal .sp-body'));
+  const curInBody=inSpBody(cur);
+  let best=null,bs=Infinity, altBest=null,altBs=Infinity;
   for(const el of list){
     if(el===cur) continue;
     const r=el.getBoundingClientRect(), dx=r.left+r.width/2-cx, dy=r.top+r.height/2-cy;
     const ok=(dir==='right'&&dx>4)||(dir==='left'&&dx<-4)||(dir==='down'&&dy>4)||(dir==='up'&&dy<-4);
     if(!ok) continue;
     const horiz=dir==='left'||dir==='right';
-    const score=(horiz?Math.abs(dx):Math.abs(dy))+(horiz?Math.abs(dy):Math.abs(dx))*2.2;
-    if(score<bs){bs=score;best=el;}
+    const settingsMove=!horiz&&(curInBody||inSpBody(el));
+    const score=settingsMove
+      ? Math.abs(dy)+Math.abs(dx)*0.12
+      : (horiz?Math.abs(dx):Math.abs(dy))+(horiz?Math.abs(dy):Math.abs(dx))*2.2;
+    /* داخل القائمة نفضّل دائماً عناصر القائمة على زر الرجوع الثابت في الرأس */
+    if(settingsMove&&!inSpBody(el)){ if(score<altBs){altBs=score;altBest=el;} }
+    else if(score<bs){bs=score;best=el;}
   }
-  return best;
+  return best||altBest;
 }
 function isOkKey(e){
   const k=e.key, c=e.keyCode||0;
