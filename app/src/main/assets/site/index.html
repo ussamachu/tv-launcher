@@ -1253,7 +1253,7 @@ function renderDock(){
   ids.forEach(id=>{
     const app=getApp(id);
     const c=document.createElement('div');
-    c.className='tile dpad-focusable'; c.tabIndex=0; c.dataset.appLabel=app.label; c.dataset.fk='dock-'+id;
+    c.className='tile dpad-focusable'; c.tabIndex=0; c.dataset.appLabel=app.label; c.dataset.fk='dock-'+id; c.dataset.appId=id;
     c.setAttribute('style',tileStyle(app));
     c.innerHTML='<div class="mark">'+app.icon+'</div>';
     c.onclick=()=>launchAppFor(app);
@@ -1300,7 +1300,7 @@ function renderAllAppsGrid(){
     getApps().forEach(app=>{
       const fav=STATE.favAppIds.includes(app.id);
       const item=document.createElement('div');
-      item.className='tile dapp dpad-focusable'; item.tabIndex=0; item.dataset.fk='da-'+app.id; item.dataset.favId=app.id;
+      item.className='tile dapp dpad-focusable'; item.tabIndex=0; item.dataset.fk='da-'+app.id; item.dataset.favId=app.id; item.dataset.appId=app.id;
       item.setAttribute('style',tileStyle(app));
       item.innerHTML='<div class="mark">'+app.icon+'</div><div class="dlabel">'+app.label+'</div>';
       item.onclick=()=>{ closeAllAppsDrawer(); launchAppFor(app); };
@@ -1348,7 +1348,11 @@ function ctxAddBtn(kind,text,cls){
 }
 function openAppCtx(id,place,focusEl){
   const m=document.getElementById('app-ctx-modal'); if(!m||ctxIsOpen()) return;
-  const app=getApp(id); if(!app) return;
+  /* تحديد التطبيق بدقة: بالمعرّف ثم باسم الحزمة (احتياط) */
+  let app=getApp(id);
+  if(!app){ try{ app=getApps().find(a=>a.pkg===id||a.id===id)||null; }catch(e){ app=null; } }
+  if(!app) return;
+  id=app.id;
   ctxApp={ id:id, place:place, focus:focusEl||dpadFocused };
   const logo=document.getElementById('ctx-logo'), title=document.getElementById('ctx-title'), btns=document.getElementById('ctx-btns');
   if(logo){ logo.setAttribute('style',tileStyle(app)); logo.innerHTML=app.icon||'<span class="letter">'+(app.label||'?').charAt(0).toUpperCase()+'</span>'; }
@@ -2443,15 +2447,74 @@ function findNearest(cur,dir,list){
   return best;
 }
 function isOkKey(e){
-  const k=e.key;
-  return k==='Enter'||k==='Select'||k==='Center'||e.keyCode===23||e.keyCode===66;
+  const k=e.key, c=e.keyCode||0;
+  return k==='Enter'||k==='Select'||k==='Center'||k===' '||k==='Spacebar'||
+         k==='MediaPlayPause'||k==='Play'||k==='MediaPlay'||
+         c===13||c===23||c===32||c===66||c===85||c===126||c===179||c===415;
 }
-let dpadPressTimer=null, dpadPressLong=false, dpadLongPressTarget=null, dpadLongPressPlace=null;
+
+/* ═══ الضغط المطول 800ms — منطق موحّد للريموت واللمس/الماوس ═══ */
+const LP_MS=800;
+let lpTimer=null, lpActive=null, lpLongDone=false;
+let lpSuppressUntil=0, lpSuppressEl=null, lpProgAt=0, lpProgEl=null;
+let lpPtrX=0, lpPtrY=0;
+
+/* استخراج (العنصر + معرّف التطبيق + المكان) من أي بطاقة تطبيق */
+function appCardInfo(el){
+  if(!el||!el.classList) return null;
+  const isDrawer=el.classList.contains('dapp');
+  const isDock=!isDrawer&&el.classList.contains('tile')&&typeof el.dataset.fk==='string'&&el.dataset.fk.indexOf('dock-')===0;
+  if(!isDrawer&&!isDock) return null;
+  const place=isDrawer?'drawer':'dock';
+  let id=el.dataset.appId||el.dataset.favId||'';
+  if(!id&&el.dataset.fk) id=el.dataset.fk.replace(/^(dock-|da-)/,'');
+  if(!id&&el.closest){
+    const holder=el.closest('[data-app-id],[data-fav-id]');
+    if(holder) id=holder.dataset.appId||holder.dataset.favId||'';
+  }
+  if(!id) return null;
+  return {el:el,id:id,place:place};
+}
+function lpCancel(){
+  if(lpTimer){ clearTimeout(lpTimer); lpTimer=null; }
+  lpActive=null; lpLongDone=false;
+}
+let lpSwallowUntil=0; /* كبت تكرار زر OK بعد فتح الخيارات أثناء استمرار الضغط */
+function lpBegin(info,source){
+  if(!info) return;
+  lpCancel();
+  info.source=source||'key';
+  lpActive=info;
+  lpTimer=setTimeout(function(){
+    lpTimer=null;
+    const cur=lpActive;
+    if(!cur) return;
+    lpLongDone=true;
+    if(cur.source==='key') lpSwallowUntil=Date.now()+3000; /* الريموت فقط: يمنع تكرار الحدث أثناء الضغط */
+    lpSuppressUntil=Date.now()+900; lpSuppressEl=cur.el; /* ابتلاع نقرة ما بعد الفتح */
+    try{ openAppCtx(cur.id,cur.place,cur.el); }
+    catch(err){ console.warn('[lp] ctx',err); }
+  },LP_MS);
+}
+function lpFireShort(info){
+  if(!info) return;
+  const el=info.el;
+  if(el&&document.body.contains(el)){
+    lpProgAt=Date.now(); lpProgEl=el;  /* حارس ضد النقرة الأصلية المكرّرة */
+    try{ el.click(); return; }catch(e){}
+  }
+  /* إن أُعيد بناء البطاقة أثناء الضغط: تشغيل مباشر بالمعرّف */
+  const app=getApp(info.id)||getApps().find(a=>a.pkg===info.id);
+  if(!app) return;
+  if(info.place==='drawer'){ try{ closeAllAppsDrawer(); }catch(e){} }
+  launchAppFor(app);
+}
 document.addEventListener('keydown',e=>{
   const k=e.key, act=document.activeElement, typing=act&&act.tagName==='INPUT';
   const sm=document.getElementById('settings-modal'), dr=document.getElementById('all-apps-drawer'), qro=document.getElementById('qr-overlay'), mmo=document.getElementById('matches-modal');
   if(qro&&qro.classList.contains('open')){ e.preventDefault(); hideQr(); return; }
   if(k==='Escape'||k==='GoBack'||(k==='Backspace'&&!typing)){
+    lpCancel();
     if(ctxIsOpen()){ e.preventDefault(); ctxClose(); }
     else if(mmo&&mmo.classList.contains('open')){ e.preventDefault(); closeMatchesModal(); }
     else if(sm.classList.contains('open')){ e.preventDefault(); closeSettings(); }
@@ -2467,29 +2530,22 @@ document.addEventListener('keydown',e=>{
   }
   if(isOkKey(e)){
     if(typing){ e.preventDefault(); clearTimeout(searchTimer); searchCity(true); act.blur(); return; }
-    if(dpadFocused){
-      e.preventDefault();
-      /* بطاقة تطبيق (شريط المفضلة أو درج التطبيقات): ضغط مطول 800ms = خيارات سريعة، ضغط قصير = تشغيل */
-      const isDapp=dpadFocused.classList&&dpadFocused.classList.contains('dapp')&&dpadFocused.dataset.favId;
-      const isDockTile=dpadFocused.classList&&dpadFocused.classList.contains('tile') && typeof dpadFocused.dataset.fk==='string' && dpadFocused.dataset.fk.slice(0,5)==='dock-';
-      if(isDapp||isDockTile){
-        if(e.repeat) return;
-        dpadPressLong=false;
-        clearTimeout(dpadPressTimer);
-        dpadLongPressTarget=isDapp?dpadFocused.dataset.favId:dpadFocused.dataset.fk.slice(5);
-        dpadLongPressPlace=isDapp?'drawer':'dock';
-        dpadPressTimer=setTimeout(function(){
-          dpadPressTimer=null;
-          if(dpadLongPressTarget!=null){ dpadPressLong=true; openAppCtx(dpadLongPressTarget,dpadLongPressPlace,dpadFocused); }
-        },800);
-        return;
-      }
-      if(dpadFocused.tagName==='INPUT') dpadFocused.focus(); else dpadFocused.click();
+    if(!dpadFocused) return;
+    e.preventDefault();
+    if(e.repeat||Date.now()<lpSwallowUntil) return; /* لا نكرّر التنفيذ أثناء استمرار الضغط */
+    /* بطاقة تطبيق (شريط المفضلة أو الدرج): ضغط مطول 800ms = خيارات، ضغط قصير = تشغيل */
+    const info=appCardInfo(dpadFocused);
+    if(info){
+      lpBegin(info,'key');
+      return;
     }
+    lpCancel();
+    if(dpadFocused.tagName==='INPUT') dpadFocused.focus(); else dpadFocused.click();
     return;
   }
   const dir={ArrowRight:'right',ArrowLeft:'left',ArrowDown:'down',ArrowUp:'up'}[k];
   if(!dir) return;
+  lpCancel(); /* تحريك التركيز يُلغي أي ضغط مطول جارٍ */
   /* أثناء الكتابة في حقل البحث: لا نُخرج التركيز إلا بالسهم الأسفل؛ الأسهم المغرب تبقى للكتابة */
   if(typing&&dir!=='down') return;
   e.preventDefault(); if(typing) act.blur();
@@ -2501,48 +2557,63 @@ document.addEventListener('keydown',e=>{
 });
 document.addEventListener('keyup',e=>{
   if(!isOkKey(e)) return;
-  if(dpadPressTimer){
-    clearTimeout(dpadPressTimer); dpadPressTimer=null;
-    /* ضغطة قصيرة قبل الـ 800ms = تشغيل عادي */
-    if(!dpadPressLong&&dpadFocused&&dpadFocused.classList&&
-        (dpadFocused.classList.contains('dapp')||
-         (dpadFocused.classList.contains('tile')&&!dpadFocused.classList.contains('dapp')&&
-          typeof dpadFocused.dataset.fk==='string'&&dpadFocused.dataset.fk.slice(0,5)==='dock-'))) dpadFocused.click();
-  }
-  dpadLongPressTarget=null;
-  dpadLongPressPlace=null;
-  dpadPressLong=false;
+  const info=lpActive, wasLong=lpLongDone, hadTimer=!!lpTimer;
+  lpCancel();
+  lpSwallowUntil=0;
+  /* إفلات قبل 800ms = ضغطة عادية: افتح التطبيق */
+  if(hadTimer && !wasLong && info) lpFireShort(info);
 });
+/* فقدان التركيز أو إخفاء الصفحة يُلغي المؤقت */
+window.addEventListener('blur',function(){ lpCancel(); lpSwallowUntil=0; });
+document.addEventListener('visibilitychange',function(){ if(document.hidden) lpCancel(); });
 
-/* الضغط المطول بالماوس/اللمس (pointerdown) على بطاقات التطبيقات — نفس منطق 800ms */
-let ptrPressTimer=null, ptrSuppressClick=false;
+/* الضغط المطول باللمس/الماوس على بطاقات التطبيقات — نفس مؤقت الـ 800ms */
 document.addEventListener('pointerdown',e=>{
-  const st=e.target&&e.target.closest?e.target.closest('.star'):null;
-  if(st) return; /* النجمة تظل مفتاح تبديل فوري من النقرة الأولى */
+  if(e.button&&e.button!==0) return;
+  const t=e.target;
+  if(!t||!t.closest) return;
+  if(t.closest('.star')) return; /* النجمة تظل تبديلاً فورياً */
+  const card=t.closest('.tile');
+  if(!card) return;
+  const info=appCardInfo(card);
+  if(!info) return;
+  dpadSetFocus(card);
+  lpPtrX=e.clientX||0; lpPtrY=e.clientY||0;
+  lpBegin(info,'ptr');
+},{passive:true});
+document.addEventListener('pointermove',e=>{
+  if(!lpTimer) return;
+  const dx=(e.clientX||0)-lpPtrX, dy=(e.clientY||0)-lpPtrY;
+  if(dx*dx+dy*dy>900) lpCancel(); /* سحب/تمرير: إلغاء */
+},{passive:true});
+document.addEventListener('pointerup',function(){ lpCancel(); },{passive:true});
+document.addEventListener('pointercancel',function(){ lpCancel(); },{passive:true});
+/* قائمة السياق (زر القائمة/الماوس الأيمن) تفتح الخيارات مباشرة */
+document.addEventListener('contextmenu',function(e){
+  const t=e.target;
+  if(!t||!t.closest) return;
+  const card=t.closest('.tile');
+  if(!card) return;
+  const info=appCardInfo(card);
+  if(!info) return;
+  e.preventDefault();
+  lpCancel();
+  dpadSetFocus(card);
+  openAppCtx(info.id,info.place,card);
+});
+/* كبت النقرات الزائدة بعد الضغط المطول أو بعد الضغطة القصيرة البرمجية */
+document.addEventListener('click',function(e){
   const card=e.target&&e.target.closest?e.target.closest('.tile'):null;
   if(!card) return;
-  const isDapp=card.classList.contains('dapp')&&card.dataset.favId;
-  const isDockTile=card.classList.contains('tile')&&!card.classList.contains('dapp')&&
-    typeof card.dataset.fk==='string'&&card.dataset.fk.slice(0,5)==='dock-';
-  if(!isDapp&&!isDockTile) return;
-  dpadSetFocus(card);
-  ptrSuppressClick=false;
-  clearTimeout(ptrPressTimer);
-  const id=isDapp?card.dataset.favId:card.dataset.fk.slice(5);
-  const place=isDapp?'drawer':'dock';
-  ptrPressTimer=setTimeout(function(){
-    ptrPressTimer=null;
-    ptrSuppressClick=true; /* منع النقرة التالية من فتح التطبيق */
-    openAppCtx(id,place,card);
-  },800);
-},{passive:true});
-document.addEventListener('pointerup',function(){ clearTimeout(ptrPressTimer); ptrPressTimer=null; },{passive:true});
-document.addEventListener('pointercancel',function(){ clearTimeout(ptrPressTimer); ptrPressTimer=null; },{passive:true});
-/* كبت النقرة التي تلي الضغط المطول (مرحلة الالتقاط قبل معالِج onclick) */
-document.addEventListener('click',function(e){
-  if(!ptrSuppressClick) return;
-  e.preventDefault(); e.stopPropagation();
-  ptrSuppressClick=false;
+  const now=Date.now();
+  /* النقرة الطبيعية (trusted) التي تلي اكتمال الضغط المطول فقط — لا نلمس النقرات البرمجية */
+  if(e.isTrusted&&lpSuppressEl&&card===lpSuppressEl&&now<lpSuppressUntil){
+    lpSuppressEl=null;
+    e.preventDefault(); e.stopPropagation(); return;
+  }
+  if(lpProgEl&&card===lpProgEl&&e.isTrusted&&(now-lpProgAt)<400){
+    e.preventDefault(); e.stopPropagation(); lpProgEl=null; return;
+  }
 },true);
 
 /* ═══ 19. BOOT ═══ */
