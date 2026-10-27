@@ -317,9 +317,10 @@ i[data-ic]{display:inline-flex;align-items:center;justify-content:center;font-st
   background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);flex-shrink:0;direction:ltr}
 .mm-side{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;min-width:0}
 .mm-logo{width:54px;height:54px;object-fit:contain;flex-shrink:0}
-.mm-wait{width:54px;height:54px;border-radius:18px;background:rgba(125,180,255,.10);border:1px dashed rgba(125,180,255,.35);
+.mm-wait{width:54px;height:54px;border-radius:16px;background:linear-gradient(145deg,rgba(30,41,59,.9),rgba(15,23,42,.95));
+  border:1.5px solid rgba(255,198,92,.35);box-shadow:inset 0 1px 0 rgba(255,255,255,.12);
   display:flex;align-items:center;justify-content:center;flex-shrink:0;
-  font-size:24px;font-weight:900;color:#dbe9ff;line-height:1;overflow:hidden}
+  font-size:22px;font-weight:800;color:var(--gold);line-height:1;overflow:hidden}
 .mm-name{font-size:21px;font-weight:700;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mm-mid{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-width:220px;text-align:center;direction:rtl}
 .mm-sc{display:inline-flex;align-items:baseline;gap:6px;white-space:nowrap}
@@ -1642,7 +1643,7 @@ const MM_ESPN_SLUGS=['uefa.champions','uefa.europa','uefa.europa.conf','eng.1','
 const MM_MA_RE=/morocco|maroc|المغرب|botola|gnf|throne|trône|trone|raja|wydad|berkane|fus|rabat|hassania|safi|maghreb|ittihad tanger|difaa|mohammedia|touarga|oued zem|chabab|رجاء|وداد|بركان|الجيش/i;
 const MM_FETCH_MIN=15*60*1000;
 /* شعارات الفرق: كاش دائم + طلبات متسلسلة منخفضة الشغل (Zero-Lag) */
-const MM_LOGO_KEY='tv_mm_logos_v4';
+const MM_LOGO_KEY='tv_mm_logos_v5';
 let MM_LOGO_MAP=(function(){
   try{
     const o=JSON.parse(localStorage.getItem(MM_LOGO_KEY))||{};
@@ -1659,16 +1660,15 @@ function mmEsc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(ch){ 
 const MM_DAY_SHIFT_MS=2*60*60*1000;
 function mmDate(){ const n=cityNow(); return new Date(n.getTime()-MM_DAY_SHIFT_MS); }
 function mmDay(){ const n=mmDate(); return n.getFullYear()+'-'+pad2(n.getMonth()+1)+'-'+pad2(n.getDate()); }
-function mmCacheKey(){ return 'tv_matches_v3_'+mmDay(); }
+function mmCacheKey(){ return 'tv_matches_v4_'+mmDay(); }
 function mmYMD(){ return mmDay().replace(/-/g,''); }
 
-/* شعار فريق ESPN: 3 مصادر بترتيب موثوقية — team.logo ثم logos[0].url ثم توليد الرابط من team.id
-   (Scoreboard API يضع الرأس في team.logo أكثر من logos، والتوليد من id يحسم البقية) */
+/* شعار فريق ESPN: مصدران حقيقيان فقط — team.logo ثم logos[0].url.
+   لا نولّد رابطًا من team.id أبدًا: أندية الكؤوس الصغيرة كلها 404 فيولّد صورة مكسورة ورمشة */
 function espnTeamLogo(t){
   if(!t) return '';
-  if(typeof t.logo==='string'&&t.logo) return t.logo;
+  if(typeof t.logo==='string'&&t.logo.indexOf('http')===0) return t.logo;
   if(Array.isArray(t.logos)&&t.logos[0]&&t.logos[0].url) return t.logos[0].url;
-  if(t.id) return 'https://a.espncdn.com/i/teamlogos/soccer/500/'+t.id+'.png';
   return '';
 }
 async function mmFetchSlug(slug){
@@ -1682,9 +1682,14 @@ async function mmFetchSlug(slug){
     let home=null,away=null;
     comps.forEach(function(cp){ if(cp.homeAway==='home') home=cp; else if(cp.homeAway==='away') away=cp; });
     home=home||comps[0]||{}; away=away||comps[1]||{};
+    const homeName=(home.team&&home.team.displayName)||'?', awayName=(away.team&&away.team.displayName)||'?';
+    /* لا نمسح الشعارات المحفوظة: ندمج MM_LOGO_MAP فورًا إذا لم يُرجع ESPN شعارًا */
+    let hlogo=espnTeamLogo(home.team), alogo=espnTeamLogo(away.team);
+    if(!hlogo&&MM_LOGO_MAP[homeName]) hlogo=MM_LOGO_MAP[homeName];
+    if(!alogo&&MM_LOGO_MAP[awayName]) alogo=MM_LOGO_MAP[awayName];
     return { id:ev.id, slug:slug, lg:lg,
-      home:(home.team&&home.team.displayName)||'?', away:(away.team&&away.team.displayName)||'?',
-      hlogo:espnTeamLogo(home.team), alogo:espnTeamLogo(away.team),
+      home:homeName, away:awayName,
+      hlogo:hlogo, alogo:alogo,
       hs:home.score||'', as:away.score||'', state:st.state||'pre',
       ts:ev.date?(Date.parse(ev.date)||0):0 };
   });
@@ -1705,9 +1710,14 @@ async function mmFetchMA(){
     let state='pre';
     if(hs!=null&&as!=null) state=/match finished|^ft$|ended/i.test(x.strStatus||'')?'post':'in';
     else if(/match finished|^ft$/i.test(x.strStatus||'')) state='post';
+    const homeName=x.strHomeTeam||'?', awayName=x.strAwayTeam||'?';
+    /* نفس الدمج: الشعار المحفوظ يمنع اختفاء الأندية الصغيرة بعد تحديث النتائج */
+    let hlogo=x.strHomeTeamBadge||'', alogo=x.strAwayTeamBadge||'';
+    if(!hlogo&&MM_LOGO_MAP[homeName]) hlogo=MM_LOGO_MAP[homeName];
+    if(!alogo&&MM_LOGO_MAP[awayName]) alogo=MM_LOGO_MAP[awayName];
     return { id:x.idEvent, slug:'ma', lg:x.strLeague||'',
-      home:x.strHomeTeam||'?', away:x.strAwayTeam||'?',
-      hlogo:x.strHomeTeamBadge||'', alogo:x.strAwayTeamBadge||'',
+      home:homeName, away:awayName,
+      hlogo:hlogo, alogo:alogo,
       hs:hs==null?'':String(hs), as:as==null?'':String(as), state:state, ts:mmTsMa(x) };
   });
 }
@@ -1836,7 +1846,10 @@ function mmTsdbSearch(q){
       const lq=q.toLowerCase();
       let pick=ts.find(function(x){ return String(x.strTeam||'').toLowerCase()===lq&&(x.strTeamBadge||x.strBadge); });
       if(!pick) pick=ts.find(function(x){ return x.strTeamBadge||x.strBadge; });
-      return pick?String(pick.strTeamBadge||pick.strBadge||'').trim():'';
+      let u=pick?String(pick.strTeamBadge||pick.strBadge||'').trim():'';
+      /* نسخة preview في TheSportsDB ~5KB بدل ~130KB: تفتح فورًا على التلفاز */
+      if(/\.png$/i.test(u)) u+='/preview';
+      return u;
     })
     .catch(function(){ return ''; });
 }
@@ -1896,27 +1909,40 @@ function mmWikiSearch(name){
     })
     .catch(function(){ return ''; });
 }
-/* إيجاد الشعار: تحديث DOM موضعي فقط (بلا إعادة بناء القائمة) + حفظ في خريطة الشعارات وكاش المباريات */
+/* إيجاد الشعار: تحميل مسبق (preload) ثم استبدال .mm-wait عند onload فقط — صفر رمشة.
+   عند فشل التحميل تبقى شارة النادي الافتراضية ثابتة في مكانها ويُسجّل الفريق في MM_LOGO_MISS */
 function mmApplyLogo(name,badge){
   if(!name||!badge) return;
-  delete MM_LOGO_MISS[name];
-  mmLogoSave(name,badge);
-  let fixed=false;
-  mmData.forEach(function(m){
-    if(m.home===name&&m.hlogo!==badge){ m.hlogo=badge; fixed=true; }
-    if(m.away===name&&m.alogo!==badge){ m.alogo=badge; fixed=true; }
-  });
-  if(fixed) mmCacheLogos();
-  const waits=document.querySelectorAll('.mm-wait');
-  for(let k=0;k<waits.length;k++){
-    const el=waits[k];
-    if(el.getAttribute('data-team')!==name) continue;
-    const img=document.createElement('img');
-    img.className='mm-logo'; img.src=badge; img.alt=''; img.loading='lazy'; img.decoding='async';
-    img.setAttribute('data-team',name);
-    img.onerror=function(){ mmLogoFail(img); };
-    if(el.parentNode) el.parentNode.replaceChild(img,el);
-  }
+  const preload=new Image();
+  preload.referrerPolicy='no-referrer';
+  preload.onload=function(){
+    delete MM_LOGO_MISS[name];
+    mmLogoSave(name,badge);
+    let fixed=false;
+    mmData.forEach(function(m){
+      if(m.home===name&&m.hlogo!==badge){ m.hlogo=badge; fixed=true; }
+      if(m.away===name&&m.alogo!==badge){ m.alogo=badge; fixed=true; }
+    });
+    if(fixed) mmCacheLogos();
+    const waits=document.querySelectorAll('.mm-wait');
+    for(let k=0;k<waits.length;k++){
+      const el=waits[k];
+      if(el.getAttribute('data-team')!==name) continue;
+      const img=document.createElement('img');
+      img.className='mm-logo'; img.src=badge; img.alt=''; img.loading='lazy'; img.decoding='async';
+      img.setAttribute('referrerpolicy','no-referrer');
+      img.setAttribute('data-team',name);
+      img.onerror=function(){ mmLogoFail(img); };
+      if(el.parentNode) el.parentNode.replaceChild(img,el);
+    }
+  };
+  preload.onerror=function(){
+    /* فشل الشعار: لا نلمس DOM إطلاقًا (الشارة الافتراضية ثابتة) */
+    MM_LOGO_MISS[name]=Date.now();
+    if(MM_LOGO_MAP[name]===''||MM_LOGO_MAP[name]===badge) delete MM_LOGO_MAP[name];
+    try{ localStorage.setItem(MM_LOGO_KEY,JSON.stringify(MM_LOGO_MAP)); }catch(e){}
+  };
+  preload.src=badge;
 }
 function mmLogoDrain(){
   const name=MM_LOGO_Q.shift();
@@ -1940,14 +1966,14 @@ function mmLogoDrain(){
       delete MM_LOGO_MAP[name];
       try{ localStorage.setItem(MM_LOGO_KEY,JSON.stringify(MM_LOGO_MAP)); }catch(e){}
     })
-    .then(function(){ setTimeout(mmLogoDrain,120); });
+    .then(function(){ setTimeout(mmLogoDrain,40); });
 }
 function mmTeamHTML(m,side){
   const name=side==='h'?m.home:m.away;
   let url=side==='h'?m.hlogo:m.alogo;
   if(!url&&MM_LOGO_MAP[name]) url=MM_LOGO_MAP[name];
   let head;
-  if(url) head='<img class="mm-logo" src="'+mmEsc(url)+'" alt="" loading="lazy" decoding="async" data-team="'+mmEsc(name)+'" onerror="mmLogoFail(this)">';
+  if(url) head='<img class="mm-logo" src="'+mmEsc(url)+'" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" data-team="'+mmEsc(name)+'" onerror="mmLogoFail(this)">';
   else{ mmAskLogo(name); head='<span class="mm-wait" data-team="'+mmEsc(name)+'">'+mmEsc(String(name||'?').charAt(0))+'</span>'; }
   return head+'<span class="mm-name">'+mmEsc(name||'')+'</span>';
 }
